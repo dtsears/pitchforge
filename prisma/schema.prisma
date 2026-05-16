@@ -1,0 +1,208 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../app/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Auth (NextAuth / @auth/prisma-adapter) ───────────────────────────────
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─── Core Domain ─────────────────────────────────────────────────────────
+
+model Organization {
+  id           String      @id @default(cuid())
+  name         String
+  primaryColor String
+  accentColor  String
+  logoUrl      String?
+  domain       String      @unique
+  createdAt    DateTime    @default(now())
+  users        User[]
+  products     Product[]
+  caseStudies  CaseStudy[]
+  decks        Deck[]
+}
+
+model User {
+  id          String       @id @default(cuid())
+  email       String       @unique
+  name        String?
+  image       String?
+  title       String?
+  tenureYears Int?
+  bio         String?
+  specialties String[]
+  headshotUrl String?
+  orgId       String?
+  org         Organization? @relation(fields: [orgId], references: [id])
+  accounts    Account[]
+  sessions    Session[]
+  decks       Deck[]
+  createdAt   DateTime     @default(now())
+}
+
+model Product {
+  id                 String       @id @default(cuid())
+  orgId              String
+  org                Organization @relation(fields: [orgId], references: [id])
+  name               String
+  description        String
+  iconUrl            String?
+  targetBuyerProfile String
+  slideContentBlocks Json
+  createdAt          DateTime     @default(now())
+  slides             Slide[]
+}
+
+model CaseStudy {
+  id             String       @id @default(cuid())
+  orgId          String
+  org            Organization @relation(fields: [orgId], references: [id])
+  title          String
+  industry       String
+  companySize    String
+  useCase        String
+  productsTagged String[]
+  headlineMetric String
+  narrative      String
+  customerName   String?
+  customerTitle  String?
+  createdAt      DateTime     @default(now())
+}
+
+model Prospect {
+  id                  String    @id @default(cuid())
+  companyName         String
+  websiteUrl          String
+  industry            String?
+  contactName         String?
+  contactEmail        String?
+  contactTitle        String?
+  notes               String?
+  tagline             String?
+  logoUrl             String?
+  primaryColor        String?
+  accentColor         String?
+  recentNews          Json?
+  inferredPains       String[]
+  scrapedAt           DateTime?
+  scrapeConfidence    Float?
+  salesforceAccountId String?
+  opportunityStage    String?
+  opportunityAmount   Float?
+  createdAt           DateTime  @default(now())
+  decks               Deck[]
+}
+
+model Deck {
+  id         String       @id @default(cuid())
+  orgId      String
+  org        Organization @relation(fields: [orgId], references: [id])
+  userId     String
+  user       User         @relation(fields: [userId], references: [id])
+  prospectId String
+  prospect   Prospect     @relation(fields: [prospectId], references: [id])
+  status     DeckStatus   @default(DRAFT)
+  publicSlug String       @unique
+  slides     Slide[]
+  views      DeckView[]
+  emails     Email[]
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+}
+
+enum DeckStatus {
+  DRAFT
+  SENT
+  VIEWED
+  CLOSED_WON
+  CLOSED_LOST
+}
+
+model Slide {
+  id        String    @id @default(cuid())
+  deckId    String
+  deck      Deck      @relation(fields: [deckId], references: [id], onDelete: Cascade)
+  type      SlideType
+  content   Json
+  order     Int
+  productId String?
+  product   Product?  @relation(fields: [productId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+enum SlideType {
+  COVER
+  REP
+  UNDERSTANDING
+  WHY_NOW
+  SOLUTION
+  PROOF
+  ROI
+  NEXT_STEPS
+}
+
+model DeckView {
+  id                String   @id @default(cuid())
+  deckId            String
+  deck              Deck     @relation(fields: [deckId], references: [id])
+  viewerIp          String?
+  userAgent         String?
+  slideEngagement   Json     @default("{}")
+  isInternalForward Boolean  @default(false)
+  createdAt         DateTime @default(now())
+}
+
+model Email {
+  id        String    @id @default(cuid())
+  deckId    String
+  deck      Deck      @relation(fields: [deckId], references: [id])
+  type      EmailType
+  subject   String
+  body      String    @db.Text
+  recipient String
+  sentAt    DateTime?
+  createdAt DateTime  @default(now())
+}
+
+enum EmailType {
+  FIRST_TOUCH
+  FOLLOW_UP
+}

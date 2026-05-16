@@ -1,26 +1,28 @@
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #fafaf9;
+  --foreground: #1c1917;
+  --bluehost-blue: #003087;
+  --bluehost-mid: #0057b8;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Geist Sans", ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 @layer utilities {
+  .text-display {
+    font-family: "Fraunces", ui-serif, Georgia, serif;
+    letter-spacing: -0.03em;
+  }
   .text-balance {
     text-wrap: balance;
   }
