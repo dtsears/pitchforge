@@ -1,3 +1,7 @@
+import dotenv from "dotenv";
+dotenv.config({ path: ".env.local" });
+dotenv.config();
+
 import { PrismaClient } from "../app/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 
@@ -25,11 +29,11 @@ async function main() {
 
   // ─── User: Devin Martinez, Senior AE ──────────────────────────────────────
   const devin = await prisma.user.upsert({
-    where: { email: "devin.martinez@bluehost.com" },
+    where: { email: "devin.sears@newfold.com" },
     update: {},
     create: {
-      email: "devin.martinez@bluehost.com",
-      name: "Devin Martinez",
+      email: "devin.sears@newfold.com",
+      name: "Devin Sears",
       title: "Senior Account Executive",
       tenureYears: 4,
       bio: "Focused on WordPress, WooCommerce, and Agency partnerships. 4 years helping small businesses and agencies grow on Bluehost.",
