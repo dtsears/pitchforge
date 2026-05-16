@@ -15,22 +15,22 @@ export const authOptions: NextAuthOptions = {
   session: {
     strategy: "database",
   },
-  callbacks: {
-    async signIn({ user }) {
-      // Auto-link authenticated users to the Bluehost org if not already linked
-      if (user.email) {
-        const bluehost = await db.organization.findUnique({
-          where: { domain: "bluehost.com" },
+  events: {
+    // Fires after a new user record is committed — safe to update orgId here
+    async createUser({ user }) {
+      if (!user.email) return;
+      const bluehost = await db.organization.findUnique({
+        where: { domain: "bluehost.com" },
+      });
+      if (bluehost) {
+        await db.user.update({
+          where: { id: user.id },
+          data: { orgId: bluehost.id },
         });
-        if (bluehost) {
-          await db.user.update({
-            where: { email: user.email },
-            data: { orgId: bluehost.id },
-          });
-        }
       }
-      return true;
     },
+  },
+  callbacks: {
     session({ session, user }) {
       if (session.user) {
         session.user.id = user.id;
