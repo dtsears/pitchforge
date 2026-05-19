@@ -9,15 +9,19 @@ export async function scrapeUrl(url: string): Promise<string> {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         url,
-        waitFor: 2000, // allow JS-rendered content to load
+        gotoOptions: {
+          waitUntil: "networkidle2",
+          timeout: 15000,
+        },
       }),
-      signal: AbortSignal.timeout(20000), // 20s max
+      signal: AbortSignal.timeout(25000),
     }
   );
 
   if (!response.ok) {
+    const body = await response.text().catch(() => "(no body)");
     throw new Error(
-      `Browserless error: ${response.status} ${response.statusText}`
+      `Browserless error: ${response.status} ${response.statusText} — ${body}`
     );
   }
 
