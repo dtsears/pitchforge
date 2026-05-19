@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { generateDeckAction } from "@/app/actions/generate-deck";
 import Link from "next/link";
-import { ChevronLeft, Sparkles } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import { GenerateButton } from "./generate-button";
 
 export const maxDuration = 60;
