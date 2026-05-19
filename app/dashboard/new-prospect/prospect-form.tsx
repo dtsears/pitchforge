@@ -1,0 +1,241 @@
+"use client";
+
+import { useState, useTransition } from "react";
+import { Loader2, Globe, CheckCircle, AlertCircle } from "lucide-react";
+import { scrapeProspect } from "@/app/actions/scrape-prospect";
+import { createProspect } from "@/app/actions/create-prospect";
+import type { ExtractedProspect } from "@/lib/schemas/prospect";
+
+type Stage = "url" | "loading" | "review";
+
+export function ProspectForm() {
+  const [stage, setStage] = useState<Stage>("url");
+  const [extracted, setExtracted] = useState<ExtractedProspect | null>(null);
+  const [scrapedUrl, setScrapedUrl] = useState("");
+  const [scrapeError, setScrapeError] = useState("");
+  const [isPending, startTransition] = useTransition();
+
+  function handleScrape(formData: FormData) {
+    setScrapeError("");
+    setStage("loading");
+    startTransition(async () => {
+      const result = await scrapeProspect(formData);
+      if (result.success) {
+        setExtracted(result.data);
+        setScrapedUrl(result.url);
+        setStage("review");
+      } else {
+        setScrapeError(result.error);
+        setStage("url");
+      }
+    });
+  }
+
+  return (
+    <div className="max-w-2xl">
+      {stage === "url" && (
+        <form action={handleScrape}>
+          <label
+            htmlFor="url"
+            className="block text-sm font-medium text-stone-700 mb-2"
+          >
+            Prospect website URL
+          </label>
+          <div className="flex gap-3">
+            <div className="relative flex-1">
+              <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+              <input
+                id="url"
+                name="url"
+                type="url"
+                placeholder="https://prospect.com"
+                required
+                className="w-full pl-9 pr-4 py-2.5 border border-stone-200 rounded-lg text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent"
+              />
+            </div>
+            <button
+              type="submit"
+              disabled={isPending}
+              className="px-5 py-2.5 bg-stone-900 text-white text-sm font-medium rounded-lg hover:bg-stone-800 transition-colors disabled:opacity-50"
+            >
+              Import
+            </button>
+          </div>
+          {scrapeError && (
+            <div className="mt-3 flex items-start gap-2 text-red-600 text-sm">
+              <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+              {scrapeError}
+            </div>
+          )}
+        </form>
+      )}
+
+      {stage === "loading" && (
+        <div className="flex flex-col items-center justify-center py-16 text-stone-500">
+          <Loader2 className="w-8 h-8 animate-spin mb-4 text-stone-400" />
+          <p className="text-sm font-medium">Scraping website…</p>
+          <p className="text-xs mt-1">Extracting brand data and buyer signals</p>
+        </div>
+      )}
+
+      {stage === "review" && extracted && (
+        <form action={createProspect} className="space-y-6">
+          {/* Hidden fields */}
+          <input type="hidden" name="websiteUrl" value={scrapedUrl} />
+          <input type="hidden" name="logoUrl" value={extracted.logoUrl ?? ""} />
+          <input type="hidden" name="primaryColor" value={extracted.primaryColor ?? ""} />
+          <input type="hidden" name="accentColor" value={extracted.accentColor ?? ""} />
+          {extracted.inferredPains.map((pain, i) => (
+            <input key={i} type="hidden" name="inferredPains" value={pain} />
+          ))}
+
+          {/* Confidence badge */}
+          <div className="flex items-center gap-2 p-3 bg-stone-50 border border-stone-200 rounded-lg">
+            <CheckCircle className="w-4 h-4 text-amber-500 shrink-0" />
+            <span className="text-xs text-stone-600">
+              Import confidence:{" "}
+              <strong className="text-stone-900">
+                {Math.round(extracted.confidence * 100)}%
+              </strong>{" "}
+              — review and correct any fields below before saving.
+            </span>
+          </div>
+
+          {/* Company details */}
+          <fieldset>
+            <legend className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-4">
+              Company
+            </legend>
+            <div className="grid grid-cols-2 gap-4">
+              <Field
+                label="Company name"
+                name="companyName"
+                defaultValue={extracted.companyName}
+                required
+                className="col-span-2"
+              />
+              <Field
+                label="Tagline"
+                name="tagline"
+                defaultValue={extracted.tagline}
+                className="col-span-2"
+              />
+              <Field
+                label="Industry"
+                name="industry"
+                defaultValue={extracted.industry}
+              />
+              <Field
+                label="Website"
+                name="websiteUrlDisplay"
+                defaultValue={scrapedUrl}
+                disabled
+              />
+            </div>
+          </fieldset>
+
+          {/* Inferred pains */}
+          {extracted.inferredPains.length > 0 && (
+            <fieldset>
+              <legend className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-3">
+                Inferred buyer pains
+              </legend>
+              <ul className="space-y-2">
+                {extracted.inferredPains.map((pain, i) => (
+                  <li
+                    key={i}
+                    className="flex items-start gap-2 text-sm text-stone-700 bg-amber-50 border border-amber-100 rounded-lg px-3 py-2"
+                  >
+                    <span className="text-amber-500 font-bold shrink-0">·</span>
+                    {pain}
+                  </li>
+                ))}
+              </ul>
+            </fieldset>
+          )}
+
+          {/* Contact */}
+          <fieldset>
+            <legend className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-4">
+              Contact (optional)
+            </legend>
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="Contact name" name="contactName" />
+              <Field label="Title" name="contactTitle" />
+              <Field
+                label="Email"
+                name="contactEmail"
+                type="email"
+                className="col-span-2"
+              />
+            </div>
+          </fieldset>
+
+          {/* Notes */}
+          <div>
+            <label className="block text-xs font-medium text-stone-600 mb-1.5">
+              Notes
+            </label>
+            <textarea
+              name="notes"
+              rows={3}
+              placeholder="Discovery call notes, deal context…"
+              className="w-full px-3 py-2 border border-stone-200 rounded-lg text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-900 resize-none"
+            />
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <button
+              type="submit"
+              className="px-6 py-2.5 bg-stone-900 text-white text-sm font-medium rounded-lg hover:bg-stone-800 transition-colors"
+            >
+              Save Prospect
+            </button>
+            <button
+              type="button"
+              onClick={() => setStage("url")}
+              className="px-6 py-2.5 border border-stone-200 text-stone-600 text-sm font-medium rounded-lg hover:bg-stone-50 transition-colors"
+            >
+              Start over
+            </button>
+          </div>
+        </form>
+      )}
+    </div>
+  );
+}
+
+function Field({
+  label,
+  name,
+  defaultValue,
+  type = "text",
+  required,
+  disabled,
+  className,
+}: {
+  label: string;
+  name: string;
+  defaultValue?: string;
+  type?: string;
+  required?: boolean;
+  disabled?: boolean;
+  className?: string;
+}) {
+  return (
+    <div className={className}>
+      <label className="block text-xs font-medium text-stone-600 mb-1.5">
+        {label}
+        {required && <span className="text-red-400 ml-0.5">*</span>}
+      </label>
+      <input
+        type={type}
+        name={name}
+        defaultValue={defaultValue ?? ""}
+        required={required}
+        disabled={disabled}
+        className="w-full px-3 py-2 border border-stone-200 rounded-lg text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-900 disabled:bg-stone-50 disabled:text-stone-400"
+      />
+    </div>
+  );
+}

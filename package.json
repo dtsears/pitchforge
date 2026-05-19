@@ -16,9 +16,11 @@
     "seed": "tsx prisma/seed.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.97.1",
     "@auth/prisma-adapter": "^2.11.2",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "cheerio": "^1.2.0",
     "lucide-react": "^1.16.0",
     "next": "14.2.35",
     "next-auth": "^4.24.14",
@@ -30,6 +32,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@types/cheerio": "^0.22.35",
     "@types/node": "^20",
     "@types/pg": "^8.20.0",
     "@types/pino": "^7.0.4",
