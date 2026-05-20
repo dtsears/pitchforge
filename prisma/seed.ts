@@ -44,36 +44,37 @@ async function main() {
 
   // ─── Products ─────────────────────────────────────────────────────────────
   const products = [
+    // ── Core hosting products (brand voice updated per guidelines) ──────────
     {
       name: "WordPress Pro",
       description:
-        "Managed WordPress hosting built for performance. Includes automatic updates, daily backups, staging environments, and a dedicated WordPress support team.",
+        "Fast WordPress hosting, even in traffic spikes. Includes automatic updates, daily backups, staging environments, and 24/7 WordPress expert support. Breathe easier — we handle the technical side.",
       targetBuyerProfile:
-        "Small businesses and bloggers who want a reliable, hands-off WordPress experience without managing a server.",
+        "Small businesses and content creators who want reliable, hands-off WordPress hosting without managing a server.",
       slideContentBlocks: {
-        headline: "Managed WordPress — Zero Headaches",
+        headline: "Fast WordPress Hosting, Even in Traffic Spikes",
         bullets: [
-          "Automatic core, plugin & theme updates",
+          "Automatic core, plugin, and theme updates",
           "Daily backups with one-click restore",
           "Staging environment for safe testing",
-          "Expert WordPress support 24/7",
+          "24/7 WordPress expert support — phone and chat",
         ],
-        proof: "99.9% uptime SLA",
+        proof: "99.9% uptime SLA. Join 5 million+ WordPress users.",
       },
     },
     {
       name: "Cloud Hosting",
       description:
-        "Scalable cloud infrastructure that grows with your traffic. Resources scale automatically during peaks — pay for what you use, never over-provision.",
+        "Extra CPU and RAM during traffic spikes — automatically. Scalable cloud infrastructure that grows with your business without manual intervention or over-provisioning.",
       targetBuyerProfile:
         "Growing businesses that experience traffic spikes and need reliability without managing infrastructure.",
       slideContentBlocks: {
-        headline: "Cloud Hosting That Scales With You",
+        headline: "Extra CPU and RAM During Traffic Spikes",
         bullets: [
-          "Auto-scaling resources during traffic spikes",
-          "SSD storage for 3x faster load times",
+          "Auto-scaling resources when traffic surges",
+          "SSD storage for ultrafast load times",
           "Free CDN with 200+ global edge nodes",
-          "Resource monitoring dashboard included",
+          "Pay for what you use — never over-provision",
         ],
         proof: "3x faster than shared hosting",
       },
@@ -81,50 +82,50 @@ async function main() {
     {
       name: "Agency Partner Program",
       description:
-        "White-label hosting and reseller tools for agencies managing multiple client sites. Includes a central dashboard, client billing, and priority support.",
+        "Business hosting. Human support. One dashboard for every client site you manage — with white-label options, wholesale pricing, and priority 24/7 phone and chat support.",
       targetBuyerProfile:
-        "Digital agencies and freelancers who manage 5+ client websites and need centralized control, white-label options, and margin on hosting.",
+        "Digital agencies and freelancers managing 5+ client websites who need centralized control, white-label options, and margin on hosting.",
       slideContentBlocks: {
-        headline: "One Dashboard. Every Client Site.",
+        headline: "Business Hosting. Human Support.",
         bullets: [
-          "Manage unlimited client sites from one login",
+          "Manage every client site from one login",
           "White-label the control panel with your brand",
           "Wholesale pricing — resell at your margin",
-          "Priority 24/7 phone & chat support",
+          "Priority 24/7 phone and chat support",
         ],
         proof: "Agency partners average 35% hosting margin",
       },
     },
     {
-      name: "AI Site Creator",
+      name: "Bluehost AI Builder",
       description:
-        "Build a professional website in minutes using AI. Answer a few questions about your business and AI generates a complete, mobile-optimized site with copy, images, and structure.",
+        "Your website. Built by AI. Backed by Bluehost. From a single prompt or Instagram handle to a fully published, hosted WordPress website — no code, no confusion, no blank page paralysis.",
       targetBuyerProfile:
-        "Small business owners with no technical background who need a professional web presence quickly and affordably.",
+        "Non-technical small business owners who need a professional WordPress website without hiring a developer or learning to code.",
       slideContentBlocks: {
-        headline: "Professional Website in Under an Hour",
+        headline: "Your Website. Built by AI. Backed by Bluehost.",
         bullets: [
-          "AI generates copy, layout, and images automatically",
-          "Mobile-optimized from day one",
-          "No designer or developer required",
-          "Includes free domain for the first year",
+          "From prompt to published website in minutes",
+          "AI extracts your brand from Instagram or a text description",
+          "Drag-and-drop editor — change anything without code",
+          "Backed by 20+ years of WordPress hosting expertise",
         ],
-        proof: "Average launch time: 47 minutes",
+        proof: "43% of the web runs on WordPress. Now anyone can use it.",
       },
     },
     {
       name: "WooCommerce Hosting",
       description:
-        "Hosting optimized for WooCommerce stores. Pre-configured for e-commerce with built-in caching, automatic plugin updates, and PCI-compliant infrastructure.",
+        "Whip up an ultrafast online store. Hosting optimized for WooCommerce with built-in caching, PCI-compliant infrastructure, and automatic plugin updates so you can focus on selling.",
       targetBuyerProfile:
-        "E-commerce businesses running WooCommerce who need fast page loads, high availability, and a hosting partner that understands online retail.",
+        "eCommerce businesses running WooCommerce who need fast page loads, high availability, and a hosting partner that understands online retail.",
       slideContentBlocks: {
-        headline: "WooCommerce Hosting Built for Sales",
+        headline: "Whip Up an Ultrafast Online Store",
         bullets: [
           "Pre-configured WooCommerce environment",
-          "PCI-compliant infrastructure for payments",
+          "PCI-compliant infrastructure for secure payments",
           "Built-in caching for fast product pages",
-          "Automatic WooCommerce + plugin updates",
+          "Automatic WooCommerce and plugin updates",
         ],
         proof: "Average 40% improvement in checkout speed",
       },
@@ -132,35 +133,81 @@ async function main() {
     {
       name: "VPS Hosting",
       description:
-        "Full root access, dedicated resources, and complete control. Ideal for developers who need a customizable environment without the cost of a dedicated server.",
+        "Our VPS hosting. Your tech playground. Full root access, dedicated resources, and complete control — without the cost of a dedicated server.",
       targetBuyerProfile:
         "Developers and technical teams who need dedicated resources, custom software stacks, and root server access.",
       slideContentBlocks: {
-        headline: "Your Server. Your Rules.",
+        headline: "Our VPS Hosting. Your Tech Playground.",
         bullets: [
           "Full root access and sudo privileges",
           "Dedicated CPU and RAM — no shared resources",
-          "Choice of OS: Ubuntu, CentOS, Debian",
-          "Scalable storage up to 240GB SSD",
+          "Choice of OS: Ubuntu, CentOS, or Debian",
+          "Automate any workflow with scalable infrastructure",
         ],
         proof: "Deploy in under 60 seconds",
+      },
+    },
+    // ── New AI-powered products (from brand guide) ──────────────────────────
+    {
+      name: "BLU Agent — AI Front Desk",
+      description:
+        "Losing leads after closing time? BLU Agent provides 24/7 AI sales support and instant appointment booking across Web, SMS, WhatsApp, and Instagram. Increase revenue without increasing your team.",
+      targetBuyerProfile:
+        "Service-based businesses with high-inquiry volumes — salons, consultants, medical practices, restaurants — that need 24/7 customer coverage without the cost of round-the-clock staffing.",
+      slideContentBlocks: {
+        headline: "Never Miss a Lead. Even at 2 AM.",
+        bullets: [
+          "24/7 AI sales support across Web, SMS, WhatsApp, and Instagram",
+          "Google Calendar integration — customers book instantly, no back-and-forth",
+          "Trained on your knowledge base, speaks in your brand voice",
+          "Handles FAQs and bookings so your team can focus on high-value work",
+        ],
+        proof: "Capture leads and book appointments while your team sleeps.",
+        elevatorPitch: "Losing leads after closing time? BLU provides 24/7 sales support and instant booking across web, SMS, and social. Increase profits without increasing your sales team.",
+        whyNow: "Your customers expect instant responses. If you aren't answering their questions and booking their appointments 24/7, your competitors will.",
+      },
+    },
+    {
+      name: "BLU LLM All-Access",
+      description:
+        "All your AI favorites — ChatGPT 5, Gemini 3, Claude 4.5, and Grok 4.1 — in one dashboard for $20/month. Stop managing multiple subscriptions. Stop paying $100+ for tools you use separately.",
+      targetBuyerProfile:
+        "SMBs and agencies currently paying for multiple AI subscriptions who want one unified dashboard with centralized access management and lower costs.",
+      slideContentBlocks: {
+        headline: "All Your AI Favorites. One Price.",
+        bullets: [
+          "ChatGPT 5, Gemini 3, Claude 4.5, and Grok 4.1 — one dashboard",
+          "Switch models by task: writing, coding, research, creativity",
+          "Centralized access management for your whole team",
+          "Privacy+ tier: encrypted searches, zero data retention",
+        ],
+        proof: "$100+ of AI value for $20/month. No analysis paralysis.",
+        pricing: {
+          basic: "$20/month — Core LLM access + AI Logo Builder",
+          privacyPlus: "$25/month — Encrypted searches + AI Logo Builder",
+          premium: "$50/month — Secure LLM + premium Bluehost features",
+        },
       },
     },
   ];
 
   for (const p of products) {
-    const product = await prisma.product.upsert({
-      where: {
-        id: (
-          await prisma.product
-            .findFirst({ where: { name: p.name, orgId: bluehost.id } })
-            .then((r) => r ?? { id: "new" })
-        ).id,
-      },
-      update: {},
-      create: { ...p, orgId: bluehost.id },
+    const existing = await prisma.product.findFirst({
+      where: { name: p.name, orgId: bluehost.id },
     });
-    console.log(`✓ Product: ${product.name}`);
+    if (existing) {
+      await prisma.product.update({
+        where: { id: existing.id },
+        data: {
+          description: p.description,
+          targetBuyerProfile: p.targetBuyerProfile,
+          slideContentBlocks: p.slideContentBlocks,
+        },
+      });
+    } else {
+      await prisma.product.create({ data: { ...p, orgId: bluehost.id } });
+    }
+    console.log(`✓ Product: ${p.name}`);
   }
 
   // ─── Case Studies (real, sourced from bluehost.com/blog) ──────────────────

@@ -33,15 +33,21 @@ BUYER PAIN POINTS:
 ${input.inferredPains.map((p) => `- ${p}`).join("\n")}
 DECK LINK: ${input.deckUrl}
 
-EMAIL BEST PRACTICES TO FOLLOW:
+BLUEHOST BRAND VOICE — APPLY TO THIS EMAIL:
+- Tone: Supportive, Clever, Authoritative. Never boastful or corny.
+- Goal: Make them feel "Bluehost gets me" — confident and optimistic, not pressured.
+- Correct spelling: WordPress (not Wordpress), plugin (not plug-in), website (not web site), email (not e-mail), eCommerce (not e-commerce), AI (not Ai).
+- Oxford commas always.
+
+EMAIL BEST PRACTICES:
 - Subject line: under 50 characters, specific, no clickbait
-- Opening: one sentence referencing something specific about their business (not "I hope this finds you well")
-- Body: 3-4 sentences max. Connect one specific pain to Bluehost's solution. Be direct, not fluffy.
-- CTA: one clear ask — a 20-minute call, not "would love to connect"
+- Opening: one sentence referencing something specific about their business — never "I hope this finds you well"
+- Body: 3-4 sentences max. Connect one specific pain to Bluehost's solution. Direct, not fluffy.
+- CTA: one clear ask — a 20-minute call. Not "would love to connect" or "circle back".
 - Include the deck link naturally as supporting context, not the main pitch
-- Tone: confident, peer-to-peer, not salesy. Like a knowledgeable colleague, not a vendor.
-- Do NOT use: "circle back", "touch base", "synergy", "game-changer", "exciting opportunity"
-- Sign-off: just the rep name and title
+- Tone: peer-to-peer. A knowledgeable colleague, not a vendor.
+- Do NOT use: "circle back", "touch base", "synergy", "game-changer", "exciting opportunity", "leverage" (overused)
+- Sign-off: rep name and title only
 
 Return ONLY valid JSON:
 {

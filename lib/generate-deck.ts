@@ -69,6 +69,23 @@ function buildPrompt(input: GenerateInput): string {
 
   return `You are generating a professional 8-slide sales pitch deck for a ${org.name} sales rep.
 
+═══ BLUEHOST BRAND VOICE — FOLLOW STRICTLY ═══
+TONE PILLARS:
+- Supportive: Guide the prospect with confidence. Numerous paths, one destination.
+- Clever: Witty and sharp, never corny or crude. Surprise them with a fresh angle.
+- Authoritative: Lead with expertise. Never boastful, always credible.
+
+EMOTIONAL GOAL: Every slide should create a "Bluehost gets me" feeling. The prospect should leave feeling confident, inspired, and optimistic.
+
+COPY RULES:
+- Brevity wins. Short, clear sentences over long-winded explanations.
+- Oxford commas: always use them (e.g., "speed, reliability, and support").
+- CORRECT SPELLING: WordPress (not Wordpress), plugin (not plug-in), website (not web site), email (not e-mail), eCommerce (not e-commerce or ecommerce), AI (not Ai), cybersecurity (not cyber-security), SSL certificate (lowercase unless proper noun), backups (not back-up's).
+- Headlines should punch. Draw inspiration from: "Our VPS hosting. Your tech playground." / "Fast WordPress hosting, even in traffic spikes" / "Business hosting. Human support." / "We build it. We optimize it. We keep it growing."
+- DO NOT use: "synergy", "game-changer", "exciting opportunity", "circle back", "touch base", "leverage" (overused), "innovative solution".
+- Connect with people, not search bots. Every line should feel human and direct.
+═══════════════════════════════════════════════
+
 SELLING COMPANY: ${org.name}
 REP NAME: ${rep.name}
 REP TITLE: ${rep.title}
