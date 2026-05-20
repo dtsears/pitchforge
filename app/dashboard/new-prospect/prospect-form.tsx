@@ -13,6 +13,7 @@ export function ProspectForm() {
   const [extracted, setExtracted] = useState<ExtractedProspect | null>(null);
   const [scrapedUrl, setScrapedUrl] = useState("");
   const [scrapeError, setScrapeError] = useState("");
+  const [fromCache, setFromCache] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   function handleScrape(formData: FormData) {
@@ -23,6 +24,7 @@ export function ProspectForm() {
       if (result.success) {
         setExtracted(result.data);
         setScrapedUrl(result.url);
+        setFromCache(result.cached);
         setStage("review");
       } else {
         setScrapeError(result.error);
@@ -93,11 +95,20 @@ export function ProspectForm() {
           <div className="flex items-center gap-2 p-3 bg-stone-50 border border-stone-200 rounded-lg">
             <CheckCircle className="w-4 h-4 text-amber-500 shrink-0" />
             <span className="text-xs text-stone-600">
-              Import confidence:{" "}
-              <strong className="text-stone-900">
-                {Math.round(extracted.confidence * 100)}%
-              </strong>{" "}
-              — review and correct any fields below before saving.
+              {fromCache ? (
+                <>
+                  <strong className="text-stone-900">Loaded from cache</strong>
+                  {" "}— previously scraped data. Review and correct any fields before saving.
+                </>
+              ) : (
+                <>
+                  Import confidence:{" "}
+                  <strong className="text-stone-900">
+                    {Math.round(extracted.confidence * 100)}%
+                  </strong>
+                  {" "}— review and correct any fields below before saving.
+                </>
+              )}
             </span>
           </div>
 

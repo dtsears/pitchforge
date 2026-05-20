@@ -4,17 +4,18 @@ import {
   ExtractedProspectSchema,
   type ExtractedProspect,
 } from "@/lib/schemas/prospect";
+import type { ScrapeResult } from "@/lib/scrape";
 
 // Verify this model ID at console.anthropic.com if extraction fails
 const HAIKU_MODEL = "claude-haiku-4-5-20251001";
 
 export async function extractProspectData(
-  html: string,
+  scraped: ScrapeResult,
   url: string
 ): Promise<ExtractedProspect> {
-  const $ = cheerio.load(html);
+  const $ = cheerio.load(scraped.html);
 
-  // Pull key signals from the DOM before handing to Claude
+  // Pull structured signals from the DOM
   const title = $("title").text().trim();
   const description =
     $('meta[name="description"]').attr("content") ??
@@ -22,41 +23,23 @@ export async function extractProspectData(
     "";
   const siteName = $('meta[property="og:site_name"]').attr("content") ?? "";
   const ogImage = $('meta[property="og:image"]').attr("content") ?? "";
-
-  // Resolve favicon / logo URL relative to origin
   const rawFavicon =
     $('link[rel="icon"]').attr("href") ??
     $('link[rel="shortcut icon"]').attr("href") ??
     "";
   const logoUrl = resolveUrl(ogImage || rawFavicon, url);
 
-  // Headings and body text (capped for token efficiency)
-  const h1s = $("h1")
-    .map((_, el) => $(el).text().trim())
-    .get()
-    .join(" | ");
-  const h2s = $("h2")
-    .map((_, el) => $(el).text().trim())
-    .get()
-    .slice(0, 8)
-    .join(" | ");
-  const bodyText = $("p, li")
-    .map((_, el) => $(el).text().trim())
-    .get()
-    .filter((t) => t.length > 40)
-    .slice(0, 12)
-    .join("\n");
+  // Use Firecrawl's markdown for body content — cleaner than raw HTML for Claude
+  const markdownExcerpt = scraped.markdown.slice(0, 3000);
 
   const context = `
 URL: ${url}
 Site name: ${siteName}
 Page title: ${title}
 Meta description: ${description}
-H1: ${h1s}
-H2s: ${h2s}
-Body content:
-${bodyText}
-`.trim().slice(0, 4000);
+Page content (markdown):
+${markdownExcerpt}
+`.trim();
 
   const client = new Anthropic();
 
@@ -88,12 +71,9 @@ Return ONLY a valid JSON object — no markdown, no explanation — matching thi
   const raw =
     message.content[0].type === "text" ? message.content[0].text.trim() : "{}";
 
-  // Strip markdown code fences if Claude wrapped the JSON
   const cleaned = raw.replace(/^```json?\s*/i, "").replace(/```\s*$/, "");
-
   const parsed = JSON.parse(cleaned) as Record<string, unknown>;
 
-  // Ensure logoUrl is set if Claude returned null but we found one
   if (!parsed.logoUrl && logoUrl) parsed.logoUrl = logoUrl;
 
   return ExtractedProspectSchema.parse(parsed);

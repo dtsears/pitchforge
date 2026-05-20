@@ -207,3 +207,16 @@ enum EmailType {
   FIRST_TOUCH
   FOLLOW_UP
 }
+
+// ─── Scrape Cache ─────────────────────────────────────────────────────────
+// Stores Firecrawl results keyed by normalized URL.
+// TTL: 30 days. Any team member scraping the same domain hits the cache.
+
+model ScrapeCache {
+  id            String   @id @default(cuid())
+  url           String   @unique
+  extractedData Json
+  rawHtml       String   @db.Text
+  createdAt     DateTime @default(now())
+  expiresAt     DateTime
+}
