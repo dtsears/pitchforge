@@ -2,12 +2,9 @@ import { getServerSession } from "next-auth";
 import { redirect, notFound } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { generateOutreachEmail } from "@/app/actions/generate-email";
 import { SendDeckClient } from "./send-deck-client";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
-
-export const maxDuration = 30;
 
 export default async function SendDeckPage({
   params,
@@ -44,16 +41,6 @@ export default async function SendDeckPage({
     process.env.NEXTAUTH_URL ?? "https://pitchforge-pi.vercel.app";
   const deckUrl = `${baseUrl}/d/${deck.publicSlug}`;
 
-  const email = await generateOutreachEmail({
-    repName: rep?.name ?? "Your Name",
-    repTitle: rep?.title ?? "Account Executive",
-    prospectCompany: deck.prospect.companyName,
-    prospectIndustry: deck.prospect.industry,
-    inferredPains: deck.prospect.inferredPains,
-    deckUrl,
-    contactName: deck.prospect.contactName,
-  });
-
   return (
     <main className="min-h-screen bg-stone-50">
       <header className="border-b border-stone-200 bg-white">
@@ -84,7 +71,12 @@ export default async function SendDeckPage({
 
         <SendDeckClient
           deckUrl={deckUrl}
-          email={email}
+          repName={rep?.name ?? ""}
+          repTitle={rep?.title ?? "Account Executive"}
+          prospectCompany={deck.prospect.companyName}
+          prospectIndustry={deck.prospect.industry}
+          inferredPains={deck.prospect.inferredPains}
+          contactName={deck.prospect.contactName}
           contactEmail={deck.prospect.contactEmail ?? ""}
         />
       </div>
