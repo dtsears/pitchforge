@@ -47,8 +47,8 @@ export function ProspectForm() {
               <input
                 id="url"
                 name="url"
-                type="url"
-                placeholder="https://prospect.com"
+                type="text"
+                placeholder="prospect.com"
                 required
                 className="w-full pl-9 pr-4 py-2.5 border border-stone-200 rounded-lg text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-stone-900 focus:border-transparent"
               />
