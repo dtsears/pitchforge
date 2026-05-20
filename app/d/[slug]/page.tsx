@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
-import { SlidePreview } from "@/app/dashboard/decks/[id]/slide-preview";
 import { PublicDeckViewer } from "./public-deck-viewer";
 
 export default async function PublicDeckPage({
