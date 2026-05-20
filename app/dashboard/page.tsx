@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { LogoutButton } from "./logout-button";
 import Link from "next/link";
-import { Plus, Building2, Globe } from "lucide-react";
+import { Plus, Building2, Globe, ChevronRight } from "lucide-react";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -127,6 +127,13 @@ export default async function DashboardPage() {
                     {p.contactName}
                   </span>
                 )}
+                <Link
+                  href={`/dashboard/prospects/${p.id}/generate`}
+                  className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-stone-600 border border-stone-200 rounded-lg hover:bg-stone-900 hover:text-white hover:border-stone-900 transition-colors shrink-0"
+                >
+                  Build Deck
+                  <ChevronRight className="w-3 h-3" />
+                </Link>
               </div>
             ))}
           </div>
