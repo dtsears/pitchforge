@@ -81,6 +81,7 @@ export async function generateDeckAction(formData: FormData) {
           customerName: caseStudy.customerName,
           customerTitle: caseStudy.customerTitle,
           productsTagged: caseStudy.productsTagged,
+          sourceUrl: caseStudy.sourceUrl,
         }
       : null,
     org: {

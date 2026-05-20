@@ -163,6 +163,7 @@ function SolutionSlide({ content, prospectColor }: { content: Record<string, unk
 }
 
 function ProofSlide({ content, prospectColor }: { content: Record<string, unknown>; prospectColor: string }) {
+  const sourceUrl = content.sourceUrl as string | undefined;
   return (
     <div className="flex flex-col justify-center h-full">
       <h2 className="text-display text-2xl font-semibold text-stone-900 mb-5">
@@ -174,10 +175,21 @@ function ProofSlide({ content, prospectColor }: { content: Record<string, unknow
       <p className="text-sm text-stone-600 leading-relaxed mb-5 max-w-xl">
         {content.narrative as string}
       </p>
-      <div className="border-t border-stone-100 pt-4">
+      <div className="border-t border-stone-100 pt-4 flex items-center justify-between">
         <p className="text-xs text-stone-400">
           {content.customerName as string} · {content.industry as string}
         </p>
+        {sourceUrl && (
+          <a
+            href={sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-medium hover:underline transition-colors"
+            style={{ color: prospectColor }}
+          >
+            Read full story →
+          </a>
+        )}
       </div>
     </div>
   );

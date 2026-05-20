@@ -164,7 +164,11 @@ async function main() {
   }
 
   // ─── Case Studies (real, sourced from bluehost.com/blog) ──────────────────
-  const caseStudies = [
+  const caseStudies: Array<{
+    title: string; industry: string; companySize: string; useCase: string;
+    productsTagged: string[]; headlineMetric: string; narrative: string;
+    customerName?: string; customerTitle?: string; sourceUrl: string;
+  }> = [
     {
       title: "Midfield Lavender Farm: 300% Sales Growth with WooCommerce",
       industry: "E-commerce",
@@ -176,6 +180,7 @@ async function main() {
         "What started as a small family retreat became a thriving farm e-commerce business for Jeannie Miller and the Midfield Lavender Farm team. By launching their store on Bluehost with WooCommerce, they were able to easily manage inventory, reach new customers beyond their local area, and grow sales dramatically — proving that even a traditional farm business can scale online with the right hosting foundation.",
       customerName: "Jeannie Miller",
       customerTitle: "Co-Founder, Midfield Lavender Farm",
+      sourceUrl: "https://www.bluehost.com/blog/midfield-farm-ecommerce-website/",
     },
     {
       title: "Bare Bakery: How Kelly Bare Doubled Her Traffic with Bluehost",
@@ -188,6 +193,7 @@ async function main() {
         "Kelly Bare overcame multiple business challenges by building her Bare Bakery site on Bluehost with WooCommerce. The streamlined ordering process transformed how customers interacted with her brand, significantly boosting traffic and making her bakery's online experience as polished as her products. The result was a measurable lift in both sales efficiency and customer satisfaction.",
       customerName: "Kelly Bare",
       customerTitle: "Owner, Bare Bakery",
+      sourceUrl: "https://www.bluehost.com/blog/bare-bakery-case-study-how-kelly-bare-doubled-her-traffic-using-bluehost/",
     },
     {
       title: "PageHub: Zero Downtime Across Hundreds of Client Sites",
@@ -200,6 +206,7 @@ async function main() {
         "PageHub, a digital marketing agency, was constrained by legacy hosting that couldn't scale with their growing client roster. After migrating to Bluehost's Agency Hosting, they achieved zero downtime and significantly stronger security across all client sites. The operational clarity this provided allowed them to focus on growth rather than firefighting infrastructure issues.",
       customerName: "Kasey",
       customerTitle: "Project and Production Manager, PageHub",
+      sourceUrl: "https://www.bluehost.com/blog/pagehub-agency-hosting-case-study/",
     },
     {
       title: "Kainetic Adventures: From Kiteboarding School to Full-Scale Adventure Company",
@@ -212,6 +219,7 @@ async function main() {
         "Kainetic Adventures transformed from a small kiteboarding school into a full-scale outdoor adventure company by building a professional website on Bluehost. By integrating WooCommerce to automate bookings, owner Danny Michelson overcame weather dependence and seasonal revenue swings — allowing the business to capture customers year-round and deliver exceptional experiences without manual reservation overhead.",
       customerName: "Danny Michelson",
       customerTitle: "Owner, Kainetic Adventures",
+      sourceUrl: "https://www.bluehost.com/blog/outdoor-adventure-company-casestudy/",
     },
     {
       title: "Andres Builds: Sub-1-Second Load Times Drive Higher Conversions",
@@ -224,6 +232,7 @@ async function main() {
         "Andres Builds, a website optimization service, relies on Bluehost to deliver the fast, reliable hosting that underpins their client results. By partnering with Bluehost, they consistently achieve sub-1-second load times — a key driver of stronger conversion rates for their clients. The reliability of the platform lets the team focus on optimization strategy rather than infrastructure management.",
       customerName: "Andres",
       customerTitle: "Founder, Andres Builds",
+      sourceUrl: "https://www.bluehost.com/blog/andres-builds-case-study/",
     },
     {
       title: "Omlie Consulting: Building Trust and Credibility Online",
@@ -236,6 +245,7 @@ async function main() {
         "Omlie, an award-winning management consulting firm, partnered with Bluehost to establish a reliable and professional digital presence. Since launching their WordPress site, they've eliminated technical disruptions, streamlined their marketing efforts, and can now confidently engage clients through a well-maintained platform — directly supporting the trust and credibility that consulting relationships demand.",
       customerName: "Omlie Consulting Team",
       customerTitle: "Management Consulting",
+      sourceUrl: "https://www.bluehost.com/blog/omlie-consulting-case-study/",
     },
     {
       title: "Infinite Event Services: Full Control Over Their Digital Storefront",
@@ -248,6 +258,7 @@ async function main() {
         "Infinite Event Services faced a critical growth blocker: a website they couldn't control, that was slow and unreliable. After switching to Bluehost WordPress Hosting, owner and CEO Sheldon Fingler achieved significant improvements in site speed and stability while gaining complete control over their digital storefront. This eliminated disruptions for clients and gave the business a foundation to grow with confidence.",
       customerName: "Sheldon Fingler",
       customerTitle: "Owner and CEO, Infinite Event Services",
+      sourceUrl: "https://www.bluehost.com/blog/infinite-event-services-wordpress-hosting-case-study/",
     },
     {
       title: "Scoops of Favor: Growing a Specialty Food Brand Through SEO",
@@ -260,6 +271,7 @@ async function main() {
         "Jessica Griffin built Scoops of Favor to offer lactose-free and vegan ice cream to customers with dietary restrictions. With Bluehost powering her WordPress site, she's been able to continuously optimize her online presence, grow her audience, and build SEO rankings that connect her products with customers who need them — scaling from a niche idea into a recognized specialty brand.",
       customerName: "Jessica Griffin",
       customerTitle: "Founder, Scoops of Favor",
+      sourceUrl: "https://www.bluehost.com/blog/scoops-ice-cream-of-favor/",
     },
     {
       title: "Hospitality Ambassadeurs: Scalable Digital Storytelling Platform",
@@ -272,6 +284,7 @@ async function main() {
         "Hospitality Ambassadeurs built a digital storytelling platform for the global hospitality industry on Bluehost WordPress Hosting. The partnership gave their team the stability and performance they needed to focus entirely on content creation — without worrying about technical infrastructure. The result was a faster, more reliable platform that could support their growing international audience.",
       customerName: "Hospitality Ambassadeurs Team",
       customerTitle: "Digital Storytelling, Hospitality Industry",
+      sourceUrl: "https://www.bluehost.com/blog/hospitality-ambassadeurs-scalable-digital-storytelling-bluehost/",
     },
     {
       title: "My Macroscopic Life: Travel Blogger Fixes Slow Site and Starts Growing Again",
@@ -284,6 +297,7 @@ async function main() {
         "The founder of My Macroscopic Life, a travel blog, was losing readers due to slow page load times that undermined the experience she'd built. After switching to Bluehost, the site's speed dramatically improved — visitors stayed longer, engaged more deeply with the content, and the blog began growing again. The technical fix gave her the foundation to focus on what mattered: creating great travel content.",
       customerName: "My Macroscopic Life",
       customerTitle: "Travel Blogger",
+      sourceUrl: "https://www.bluehost.com/blog/my-macroscopic-life-case-study/",
     },
     {
       title: "FEMME TYPE: Building a Community and Commerce Platform for Women in Design",
@@ -296,6 +310,7 @@ async function main() {
         "Amber Weaver founded FEMME TYPE after noticing the underrepresentation of women in the typography industry. Using WordPress and WooCommerce on Bluehost, she built both a community platform and a marketplace where female designers could showcase their work, connect with peers, and sell their type designs — creating visibility and economic opportunity for an underserved creative community.",
       customerName: "Amber Weaver",
       customerTitle: "Founder, FEMME TYPE",
+      sourceUrl: "https://www.bluehost.com/blog/type-focused-women-designers-find-community-with-femme-type/",
     },
     {
       title: "Wendy Luxe: From Local Sales to International Beauty Brand",
@@ -308,6 +323,7 @@ async function main() {
         "Wendy Okiriguo started Wendy Luxe selling premium hair products out of her car, determined to make high-quality products accessible. By moving her business online with Bluehost, she was able to reach customers far beyond her local area — building an international customer base and scaling her brand through a professional e-commerce experience that matched the luxury positioning of her products.",
       customerName: "Wendy Okiriguo",
       customerTitle: "Founder, Wendy Luxe",
+      sourceUrl: "https://www.bluehost.com/blog/wendy-okiriguo-is-bringing-high-end-luxury-to-the-beauty-industry/",
     },
     {
       title: "Mountain Valley Foods: 30+ Years of Community-Rooted Natural Grocery",
@@ -320,6 +336,7 @@ async function main() {
         "Founded in 1989 in Kalispell, Montana, Mountain Valley Foods has built its reputation on locally sourced natural and organic foods and deep community roots. With Bluehost powering their web presence, Patricia and Lorein have extended their family-first values into the digital space — connecting with customers online while remaining true to the community mission that has sustained their business for over three decades.",
       customerName: "Patricia and Lorein",
       customerTitle: "Co-Founders, Mountain Valley Foods",
+      sourceUrl: "https://www.bluehost.com/blog/family-is-the-glue-that-bonds-mountain-valley-foods/",
     },
   ];
 
@@ -327,7 +344,12 @@ async function main() {
     const existing = await prisma.caseStudy.findFirst({
       where: { title: cs.title, orgId: bluehost.id },
     });
-    if (!existing) {
+    if (existing) {
+      await prisma.caseStudy.update({
+        where: { id: existing.id },
+        data: { sourceUrl: cs.sourceUrl },
+      });
+    } else {
       await prisma.caseStudy.create({ data: { ...cs, orgId: bluehost.id } });
     }
     console.log(`✓ Case study: ${cs.title.slice(0, 50)}…`);

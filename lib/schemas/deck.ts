@@ -48,6 +48,7 @@ export const ProofContentSchema = z.object({
   headlineMetric: z.string(),
   narrative: z.string(),
   productsUsed: z.array(z.string()),
+  sourceUrl: z.string().nullish().transform(v => v ?? undefined),
 });
 
 export const RoiContentSchema = z.object({

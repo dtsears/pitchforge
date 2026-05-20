@@ -104,6 +104,7 @@ model CaseStudy {
   narrative      String
   customerName   String?
   customerTitle  String?
+  sourceUrl      String?
   createdAt      DateTime     @default(now())
 }
 
