@@ -2,11 +2,11 @@ import { z } from "zod";
 
 export const ExtractedProspectSchema = z.object({
   companyName: z.string(),
-  tagline: z.string().optional(),
-  industry: z.string().optional(),
-  logoUrl: z.string().optional(),
-  primaryColor: z.string().optional(),
-  accentColor: z.string().optional(),
+  tagline: z.string().nullish().transform(v => v ?? undefined),
+  industry: z.string().nullish().transform(v => v ?? undefined),
+  logoUrl: z.string().nullish().transform(v => v ?? undefined),
+  primaryColor: z.string().nullish().transform(v => v ?? undefined),
+  accentColor: z.string().nullish().transform(v => v ?? undefined),
   inferredPains: z.array(z.string()),
   confidence: z.number().min(0).max(1),
 });
