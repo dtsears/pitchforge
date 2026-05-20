@@ -1,0 +1,62 @@
+"use server";
+
+import Anthropic from "@anthropic-ai/sdk";
+
+const HAIKU_MODEL = "claude-haiku-4-5-20251001";
+
+type EmailInput = {
+  repName: string;
+  repTitle: string;
+  prospectCompany: string;
+  prospectIndustry?: string | null;
+  inferredPains: string[];
+  deckUrl: string;
+  contactName?: string | null;
+};
+
+export type GeneratedEmail = {
+  subject: string;
+  body: string;
+};
+
+export async function generateOutreachEmail(
+  input: EmailInput
+): Promise<GeneratedEmail> {
+  const client = new Anthropic();
+
+  const prompt = `You are an expert B2B sales email writer. Write a first-touch outreach email from a web hosting sales rep to a prospect.
+
+REP: ${input.repName}, ${input.repTitle} at Bluehost
+PROSPECT COMPANY: ${input.prospectCompany}${input.prospectIndustry ? ` (${input.prospectIndustry})` : ""}
+${input.contactName ? `CONTACT NAME: ${input.contactName}` : ""}
+BUYER PAIN POINTS:
+${input.inferredPains.map((p) => `- ${p}`).join("\n")}
+DECK LINK: ${input.deckUrl}
+
+EMAIL BEST PRACTICES TO FOLLOW:
+- Subject line: under 50 characters, specific, no clickbait
+- Opening: one sentence referencing something specific about their business (not "I hope this finds you well")
+- Body: 3-4 sentences max. Connect one specific pain to Bluehost's solution. Be direct, not fluffy.
+- CTA: one clear ask — a 20-minute call, not "would love to connect"
+- Include the deck link naturally as supporting context, not the main pitch
+- Tone: confident, peer-to-peer, not salesy. Like a knowledgeable colleague, not a vendor.
+- Do NOT use: "circle back", "touch base", "synergy", "game-changer", "exciting opportunity"
+- Sign-off: just the rep name and title
+
+Return ONLY valid JSON:
+{
+  "subject": "email subject line",
+  "body": "full email body including greeting, body paragraphs, CTA, and sign-off. Use \\n for line breaks."
+}`;
+
+  const message = await client.messages.create({
+    model: HAIKU_MODEL,
+    max_tokens: 600,
+    messages: [{ role: "user", content: prompt }],
+  });
+
+  const raw =
+    message.content[0].type === "text" ? message.content[0].text.trim() : "{}";
+  const cleaned = raw.replace(/^```json?\s*/i, "").replace(/```\s*$/, "");
+  return JSON.parse(cleaned) as GeneratedEmail;
+}
