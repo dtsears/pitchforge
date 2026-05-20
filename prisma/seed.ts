@@ -15,12 +15,14 @@ async function main() {
   // ─── Organization: Bluehost ───────────────────────────────────────────────
   const bluehost = await prisma.organization.upsert({
     where: { domain: "bluehost.com" },
-    update: {},
+    update: {
+      logoUrl: "https://www.bluehost.com/content/dam/bluehost/global/logo/bluehost-logo.svg",
+    },
     create: {
       name: "Bluehost",
       primaryColor: "#003087",
       accentColor: "#0057B8",
-      logoUrl: "https://www.bluehost.com/favicon-32x32.png",
+      logoUrl: "https://www.bluehost.com/content/dam/bluehost/global/logo/bluehost-logo.svg",
       domain: "bluehost.com",
     },
   });

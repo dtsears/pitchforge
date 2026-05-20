@@ -5,6 +5,7 @@
 // Prospect accent color used for emphasis (numbers, highlights).
 
 const BLUEHOST_BLUE = "#003087";
+const BLUEHOST_LOGO = "https://www.bluehost.com/content/dam/bluehost/global/logo/bluehost-logo.svg";
 
 type SlidePreviewProps = {
   slide: { type: string; content: unknown };
@@ -23,8 +24,22 @@ export function SlidePreview({ slide, prospectColor, prospectName }: SlidePrevie
         <div className="flex-1" style={{ backgroundColor: prospectColor }} />
       </div>
 
+      {/* Header: Bluehost logo top-right */}
+      <div className="shrink-0 px-8 pt-3 pb-0 flex justify-end">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={BLUEHOST_LOGO}
+          alt="Bluehost"
+          className="h-4 opacity-80"
+          onError={(e) => {
+            // Fallback to text if SVG fails to load
+            (e.target as HTMLImageElement).style.display = "none";
+          }}
+        />
+      </div>
+
       {/* Slide content */}
-      <div className="flex-1 overflow-hidden px-10 py-7">
+      <div className="flex-1 overflow-hidden px-10 py-4">
         {slide.type === "COVER" && <CoverSlide content={content} prospectName={prospectName} prospectColor={prospectColor} />}
         {slide.type === "REP" && <RepSlide content={content} prospectColor={prospectColor} />}
         {slide.type === "UNDERSTANDING" && <UnderstandingSlide content={content} prospectColor={prospectColor} />}
@@ -35,14 +50,22 @@ export function SlidePreview({ slide, prospectColor, prospectName }: SlidePrevie
         {slide.type === "NEXT_STEPS" && <NextStepsSlide content={content} prospectColor={prospectColor} />}
       </div>
 
-      {/* Bluehost footer */}
+      {/* Footer: blue bar */}
       <div
         className="shrink-0 px-10 py-2 flex items-center justify-between"
         style={{ backgroundColor: BLUEHOST_BLUE }}
       >
-        <span className="text-white text-[10px] font-semibold tracking-wide">
-          BLUEHOST
-        </span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={BLUEHOST_LOGO}
+          alt="Bluehost"
+          className="h-3 brightness-0 invert opacity-90"
+          onError={(e) => {
+            const el = e.target as HTMLImageElement;
+            el.style.display = "none";
+            el.insertAdjacentText("afterend", "BLUEHOST");
+          }}
+        />
         <span className="text-white/50 text-[9px]">Confidential</span>
       </div>
     </div>
