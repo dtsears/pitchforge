@@ -141,7 +141,8 @@ Include 3 pain points drawn from the buyer's known pains above.
 Include only the selected products above.
 
 6. PROOF (order 5):
-{ "title": "Results That Speak", "customerName": "customer name from case study", "industry": "their industry", "headlineMetric": "the key metric", "narrative": "2-3 sentence version of the story", "productsUsed": ["product names"], "sourceUrl": "${input.caseStudy?.sourceUrl ?? null}" }
+{ "title": "Results That Speak", "customerName": "customer name from case study", "industry": "their industry", "headlineMetric": "the key metric", "narrative": "2-3 sentence version of the story", "productsUsed": ["product names"], "sourceUrl": ${caseStudy?.sourceUrl ? `"${caseStudy.sourceUrl}"` : "null"} }
+IMPORTANT: Copy the sourceUrl value exactly as shown above — do not change it.
 
 7. ROI (order 6) — business case:
 { "title": "The Business Case", "metrics": [ { "label": "metric name", "value": "specific number or %", "description": "what this means for ${prospect.companyName}" }, ... ], "summary": "1-2 sentence ROI summary" }
