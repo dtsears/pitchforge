@@ -61,7 +61,19 @@ export async function generateDeck(input: GenerateInput): Promise<GeneratedDeck>
   const cleaned = raw.replace(/^```json?\s*/i, "").replace(/```\s*$/, "");
 
   const parsed = JSON.parse(cleaned) as unknown;
-  return GeneratedDeckSchema.parse(parsed);
+  const slides = GeneratedDeckSchema.parse(parsed);
+
+  // Inject sourceUrl directly — never rely on Claude to copy a URL faithfully.
+  // Every case study in the DB has a sourceUrl; this guarantees it always appears.
+  if (input.caseStudy?.sourceUrl) {
+    const proofSlide = slides.find((s) => s.type === "PROOF");
+    if (proofSlide) {
+      (proofSlide.content as Record<string, unknown>).sourceUrl =
+        input.caseStudy.sourceUrl;
+    }
+  }
+
+  return slides;
 }
 
 function buildPrompt(input: GenerateInput): string {
@@ -141,8 +153,7 @@ Include 3 pain points drawn from the buyer's known pains above.
 Include only the selected products above.
 
 6. PROOF (order 5):
-{ "title": "Results That Speak", "customerName": "customer name from case study", "industry": "their industry", "headlineMetric": "the key metric", "narrative": "2-3 sentence version of the story", "productsUsed": ["product names"], "sourceUrl": ${caseStudy?.sourceUrl ? `"${caseStudy.sourceUrl}"` : "null"} }
-IMPORTANT: Copy the sourceUrl value exactly as shown above — do not change it.
+{ "title": "Results That Speak", "customerName": "customer name from case study", "industry": "their industry", "headlineMetric": "the key metric", "narrative": "2-3 sentence version of the story", "productsUsed": ["product names"] }
 
 7. ROI (order 6) — business case:
 { "title": "The Business Case", "metrics": [ { "label": "metric name", "value": "specific number or %", "description": "what this means for ${prospect.companyName}" }, ... ], "summary": "1-2 sentence ROI summary" }
