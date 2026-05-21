@@ -123,6 +123,10 @@ model Prospect {
   accentColor         String?
   recentNews          Json?
   inferredPains       String[]
+  // Enriched scrape data
+  topOfferings        Json?     // [{ name, fitScore, fitReason }]
+  signals             Json?     // { websiteMaintenance, aiMentioned, webDevelopment, seoMentioned }
+  techStack           Json?     // { hosting, cms, detected[] }
   scrapedAt           DateTime?
   scrapeConfidence    Float?
   salesforceAccountId String?

@@ -4,6 +4,7 @@ import {
   ExtractedProspectSchema,
   type ExtractedProspect,
 } from "@/lib/schemas/prospect";
+import { detectTechStack } from "@/lib/tech-detect";
 import type { ScrapeResult } from "@/lib/scrape";
 
 // Verify this model ID at console.anthropic.com if extraction fails
@@ -15,7 +16,7 @@ export async function extractProspectData(
 ): Promise<ExtractedProspect> {
   const $ = cheerio.load(scraped.html);
 
-  // Pull structured signals from the DOM
+  // ── DOM signals ───────────────────────────────────────────────────────
   const title = $("title").text().trim();
   const description =
     $('meta[name="description"]').attr("content") ??
@@ -29,14 +30,18 @@ export async function extractProspectData(
     "";
   const logoUrl = resolveUrl(ogImage || rawFavicon, url);
 
-  // Use Firecrawl's markdown for body content — cleaner than raw HTML for Claude
-  const markdownExcerpt = scraped.markdown.slice(0, 3000);
+  // ── Tech stack (HTML pattern matching) ────────────────────────────────
+  const techStack = detectTechStack(scraped.html);
+
+  // ── Page content for Claude ───────────────────────────────────────────
+  const markdownExcerpt = scraped.markdown.slice(0, 3500);
 
   const context = `
 URL: ${url}
 Site name: ${siteName}
 Page title: ${title}
 Meta description: ${description}
+Detected tech: ${techStack.detected.join(", ") || "none detected"}
 Page content (markdown):
 ${markdownExcerpt}
 `.trim();
@@ -45,15 +50,16 @@ ${markdownExcerpt}
 
   const message = await client.messages.create({
     model: HAIKU_MODEL,
-    max_tokens: 600,
+    max_tokens: 800,
     messages: [
       {
         role: "user",
-        content: `You are analyzing a prospect's website to help a web hosting sales rep prepare a pitch deck.
+        content: `You are analyzing a prospect's website to help a Bluehost sales rep prepare a pitch deck and prioritize their outreach.
 
 ${context}
 
 Return ONLY a valid JSON object — no markdown, no explanation — matching this schema exactly:
+
 {
   "companyName": "the company name",
   "tagline": "their tagline or value proposition, or null",
@@ -62,8 +68,23 @@ Return ONLY a valid JSON object — no markdown, no explanation — matching thi
   "primaryColor": "dominant brand hex color if inferable, or null",
   "accentColor": "secondary brand hex color if inferable, or null",
   "inferredPains": ["2-4 specific pain points this company likely has around web performance, hosting reliability, or digital growth — be specific to their business"],
+  "topOfferings": [
+    {
+      "name": "what this company offers or sells (2-4 items)",
+      "fitScore": 0-100,
+      "fitReason": "one sentence on why this makes them a good fit for Bluehost hosting/products"
+    }
+  ],
+  "signals": {
+    "websiteMaintenance": true or false — do they offer or appear to need ongoing website maintenance/support?,
+    "aiMentioned": true or false — do they mention AI tools, AI services, or AI in their work?,
+    "webDevelopment": true or false — is web development a core service or activity?,
+    "seoMentioned": true or false — do they mention SEO as a service they offer or a goal they have?
+  },
   "confidence": 0.0-1.0
-}`,
+}
+
+For topOfferings fitScore: 90-100 = ideal Bluehost prospect (agency, eCommerce, high-traffic site), 60-89 = good fit, 30-59 = moderate fit, 0-29 = weak fit.`,
       },
     ],
   });
@@ -74,6 +95,10 @@ Return ONLY a valid JSON object — no markdown, no explanation — matching thi
   const cleaned = raw.replace(/^```json?\s*/i, "").replace(/```\s*$/, "");
   const parsed = JSON.parse(cleaned) as Record<string, unknown>;
 
+  // Inject tech stack (detected from HTML, not from Claude)
+  parsed.techStack = techStack;
+
+  // Ensure logoUrl if Claude returned null but we found one
   if (!parsed.logoUrl && logoUrl) parsed.logoUrl = logoUrl;
 
   return ExtractedProspectSchema.parse(parsed);

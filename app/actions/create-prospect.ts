@@ -10,6 +10,13 @@ export async function createProspect(formData: FormData) {
   const session = await getServerSession(authOptions);
   if (!session?.user) redirect("/login");
 
+  // Parse JSON blobs passed as hidden fields
+  const parseJson = (key: string) => {
+    const val = formData.get(key);
+    if (!val || val === "") return undefined;
+    try { return JSON.parse(val as string); } catch { return undefined; }
+  };
+
   const raw = ProspectFormSchema.safeParse({
     companyName: formData.get("companyName"),
     websiteUrl: formData.get("websiteUrl"),
@@ -23,10 +30,12 @@ export async function createProspect(formData: FormData) {
     primaryColor: formData.get("primaryColor") || undefined,
     accentColor: formData.get("accentColor") || undefined,
     inferredPains: formData.getAll("inferredPains").map(String),
+    topOfferings: parseJson("topOfferings"),
+    signals: parseJson("signals"),
+    techStack: parseJson("techStack"),
   });
 
   if (!raw.success) {
-    // In a future step we'll return field errors — for now, throw
     throw new Error(raw.error.issues[0].message);
   }
 
