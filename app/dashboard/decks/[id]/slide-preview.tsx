@@ -480,7 +480,7 @@ function NextStepsSlide({
           <div key={i} className="flex items-start gap-4">
             <div
               className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold"
-              style={{ backgroundColor: BLUEHOST_BLUE }}
+              style={{ backgroundColor: prospectColor }}
             >
               {i + 1}
             </div>

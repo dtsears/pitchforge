@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { Loader2, Globe, CheckCircle, AlertCircle, Cpu, Server } from "lucide-react";
 import { scrapeProspect } from "@/app/actions/scrape-prospect";
 import { createProspect } from "@/app/actions/create-prospect";
-import type { ExtractedProspect, Signals, TechStack } from "@/lib/schemas/prospect";
+import type { ExtractedProspect } from "@/lib/schemas/prospect";
 
 type Stage = "url" | "loading" | "review";
 
