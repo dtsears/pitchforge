@@ -76,8 +76,19 @@ model User {
   accounts          Account[]
   sessions          Session[]
   decks             Deck[]
-  scannedProspects  Prospect[] @relation("ProspectScanner")
-  createdAt         DateTime   @default(now())
+  scannedProspects  Prospect[]            @relation("ProspectScanner")
+  favoriteProducts  UserProductFavorite[]
+  createdAt         DateTime              @default(now())
+}
+
+model UserProductFavorite {
+  userId    String
+  productId String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([userId, productId])
 }
 
 model Product {
@@ -90,8 +101,9 @@ model Product {
   category           String?      // "Hosting" | "Agency" | "AI" | "eCommerce" | "Professional Services"
   targetBuyerProfile String
   slideContentBlocks Json
-  createdAt          DateTime     @default(now())
+  createdAt          DateTime              @default(now())
   slides             Slide[]
+  favoritedBy        UserProductFavorite[]
 }
 
 model CaseStudy {

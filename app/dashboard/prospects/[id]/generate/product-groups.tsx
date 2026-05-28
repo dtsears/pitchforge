@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
+import { FavoriteButton } from "./favorite-button";
 
 type Product = {
   id: string;
@@ -22,10 +23,11 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 export function ProductGroups({
   grouped,
+  favoriteIds = new Set(),
 }: {
   grouped: Record<string, Product[]>;
+  favoriteIds?: Set<string>;
 }) {
-  // Start all groups open
   const [open, setOpen] = useState<Record<string, boolean>>(
     Object.fromEntries(Object.keys(grouped).map((k) => [k, true]))
   );
@@ -36,61 +38,66 @@ export function ProductGroups({
 
   return (
     <div className="space-y-3">
-      {Object.entries(grouped).map(([category, products]) => (
-        <div
-          key={category}
-          className="border border-stone-200 rounded-xl overflow-hidden bg-white"
-        >
-          {/* Category header */}
-          <button
-            type="button"
-            onClick={() => toggle(category)}
-            className="w-full flex items-center justify-between px-4 py-3 hover:bg-stone-50 transition-colors"
-          >
-            <div className="flex items-center gap-2">
-              <span
-                className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border ${CATEGORY_COLORS[category] ?? CATEGORY_COLORS.Other}`}
-              >
-                {category}
-              </span>
-              <span className="text-xs text-stone-400">
-                {products.length} product{products.length !== 1 ? "s" : ""}
-              </span>
-            </div>
-            <ChevronDown
-              className="w-4 h-4 text-stone-400 transition-transform duration-150"
-              style={{ transform: open[category] ? "rotate(180deg)" : "rotate(0)" }}
-            />
-          </button>
+      {Object.entries(grouped).map(([category, products]) => {
+        // Filter out favorites — they appear in the Favorites section above
+        const nonFavorites = products.filter((p) => !favoriteIds.has(p.id));
+        if (nonFavorites.length === 0) return null;
 
-          {/* Products */}
-          {open[category] && (
-            <div className="divide-y divide-stone-100 border-t border-stone-100">
-              {products.map((product) => (
-                <label
-                  key={product.id}
-                  className="flex items-start gap-3 px-4 py-3 cursor-pointer hover:bg-stone-50 transition-colors has-[:checked]:bg-stone-50"
+        return (
+          <div
+            key={category}
+            className="border border-stone-200 rounded-xl overflow-hidden bg-white"
+          >
+            <button
+              type="button"
+              onClick={() => toggle(category)}
+              className="w-full flex items-center justify-between px-4 py-3 hover:bg-stone-50 transition-colors"
+            >
+              <div className="flex items-center gap-2">
+                <span
+                  className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full border ${CATEGORY_COLORS[category] ?? CATEGORY_COLORS.Other}`}
                 >
-                  <input
-                    type="checkbox"
-                    name="productIds"
-                    value={product.id}
-                    className="mt-0.5 accent-stone-900"
-                  />
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-stone-900">
-                      {product.name}
-                    </p>
-                    <p className="text-xs text-stone-500 mt-0.5 leading-relaxed line-clamp-2">
-                      {product.description}
-                    </p>
-                  </div>
-                </label>
-              ))}
-            </div>
-          )}
-        </div>
-      ))}
+                  {category}
+                </span>
+                <span className="text-xs text-stone-400">
+                  {nonFavorites.length} product{nonFavorites.length !== 1 ? "s" : ""}
+                </span>
+              </div>
+              <ChevronDown
+                className="w-4 h-4 text-stone-400 transition-transform duration-150"
+                style={{ transform: open[category] ? "rotate(180deg)" : "rotate(0)" }}
+              />
+            </button>
+
+            {open[category] && (
+              <div className="divide-y divide-stone-100 border-t border-stone-100">
+                {nonFavorites.map((product) => (
+                  <label
+                    key={product.id}
+                    className="flex items-start gap-3 px-4 py-3 cursor-pointer hover:bg-stone-50 transition-colors"
+                  >
+                    <input
+                      type="checkbox"
+                      name="productIds"
+                      value={product.id}
+                      className="mt-0.5 accent-stone-900"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-stone-900">
+                        {product.name}
+                      </p>
+                      <p className="text-xs text-stone-500 mt-0.5 leading-relaxed line-clamp-2">
+                        {product.description}
+                      </p>
+                    </div>
+                    <FavoriteButton productId={product.id} initialFavorited={false} />
+                  </label>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }

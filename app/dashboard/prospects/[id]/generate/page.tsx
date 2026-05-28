@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { GenerateButton } from "./generate-button";
 import { ProductGroups } from "./product-groups";
+import { FavoriteButton } from "./favorite-button";
 import type { TechStack, Signals, Offering } from "@/lib/schemas/prospect";
 
 export const maxDuration = 60;
@@ -21,7 +22,12 @@ export default async function GeneratePage({
   const session = await getServerSession(authOptions);
   if (!session?.user) redirect("/login");
 
-  const [prospect, products] = await Promise.all([
+  const currentUser = await db.user.findUnique({
+    where: { email: session.user.email! },
+    select: { id: true },
+  });
+
+  const [prospect, products, favoriteIds] = await Promise.all([
     db.prospect.findUnique({
       where: { id: params.id },
       select: {
@@ -47,6 +53,14 @@ export default async function GeneratePage({
         targetBuyerProfile: true,
       },
     }),
+    currentUser
+      ? db.userProductFavorite
+          .findMany({
+            where: { userId: currentUser.id },
+            select: { productId: true },
+          })
+          .then((rows) => new Set(rows.map((r) => r.productId)))
+      : Promise.resolve(new Set<string>()),
   ]);
 
   if (!prospect) notFound();
@@ -223,7 +237,42 @@ export default async function GeneratePage({
                 Select Products to Pitch
               </p>
 
-              <ProductGroups grouped={grouped} />
+              {/* Favorites section */}
+              {favoriteIds.size > 0 && (
+                <div className="border border-amber-200 rounded-xl overflow-hidden bg-amber-50 mb-3">
+                  <div className="flex items-center gap-2 px-4 py-3 border-b border-amber-100">
+                    <span className="text-[10px] font-semibold uppercase tracking-wider text-amber-700">
+                      ★ Your Favorites
+                    </span>
+                    <span className="text-xs text-amber-600">
+                      — pre-selected
+                    </span>
+                  </div>
+                  <div className="divide-y divide-amber-100">
+                    {products
+                      .filter((p) => favoriteIds.has(p.id))
+                      .map((product) => (
+                        <div key={product.id} className="flex items-start gap-3 px-4 py-3">
+                          <input
+                            type="checkbox"
+                            name="productIds"
+                            value={product.id}
+                            defaultChecked
+                            className="mt-0.5 accent-amber-500"
+                          />
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-semibold text-stone-900">{product.name}</p>
+                            <p className="text-xs text-stone-500 mt-0.5 line-clamp-1">{product.description}</p>
+                          </div>
+                          <FavoriteButton productId={product.id} initialFavorited={true} />
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Grouped product categories */}
+              <ProductGroups grouped={grouped} favoriteIds={favoriteIds} />
 
               <div className="flex items-center gap-4 mt-6">
                 <GenerateButton />
