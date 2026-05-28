@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Send } from "lucide-react";
 import { SlidePreview } from "./slide-preview";
 
 type Slide = {
@@ -62,6 +62,13 @@ export function DeckViewer({ deck }: { deck: Deck }) {
           <span className="text-xs text-stone-400">
             Slide {activeIndex + 1} of {deck.slides.length}
           </span>
+          <Link
+            href={`/dashboard/decks/${deck.id}/send`}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-stone-900 text-white text-xs font-medium rounded-lg hover:bg-stone-700 transition-colors"
+          >
+            <Send className="w-3 h-3" />
+            Send Deck
+          </Link>
         </div>
       </header>
 
