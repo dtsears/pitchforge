@@ -46,17 +46,18 @@ model VerificationToken {
 // ─── Core Domain ─────────────────────────────────────────────────────────
 
 model Organization {
-  id           String      @id @default(cuid())
-  name         String
-  primaryColor String
-  accentColor  String
-  logoUrl      String?
-  domain       String      @unique
-  createdAt    DateTime    @default(now())
-  users        User[]
-  products     Product[]
-  caseStudies  CaseStudy[]
-  decks        Deck[]
+  id            String      @id @default(cuid())
+  name          String
+  primaryColor  String
+  accentColor   String
+  logoUrl       String?
+  domain        String      @unique
+  brandGuideUrl String?
+  createdAt     DateTime    @default(now())
+  users         User[]
+  products      Product[]
+  caseStudies   CaseStudy[]
+  decks         Deck[]
 }
 
 model User {
@@ -72,10 +73,11 @@ model User {
   headshotUrl String?
   orgId       String?
   org         Organization? @relation(fields: [orgId], references: [id])
-  accounts    Account[]
-  sessions    Session[]
-  decks       Deck[]
-  createdAt   DateTime     @default(now())
+  accounts          Account[]
+  sessions          Session[]
+  decks             Deck[]
+  scannedProspects  Prospect[] @relation("ProspectScanner")
+  createdAt         DateTime   @default(now())
 }
 
 model Product {
@@ -132,6 +134,8 @@ model Prospect {
   salesforceAccountId String?
   opportunityStage    String?
   opportunityAmount   Float?
+  scannedById         String?
+  scannedBy           User?     @relation("ProspectScanner", fields: [scannedById], references: [id])
   createdAt           DateTime  @default(now())
   decks               Deck[]
 }

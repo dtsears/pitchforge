@@ -43,14 +43,6 @@ export default async function SendDeckPage({
 
   return (
     <main className="min-h-screen bg-stone-50">
-      <header className="border-b border-stone-200 bg-white">
-        <div className="max-w-3xl mx-auto px-6 h-14 flex items-center">
-          <span className="text-display font-semibold text-stone-900">
-            PitchForge
-          </span>
-        </div>
-      </header>
-
       <div className="max-w-3xl mx-auto px-6 py-10">
         <Link
           href="/dashboard"

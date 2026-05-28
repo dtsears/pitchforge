@@ -39,7 +39,14 @@ export async function createProspect(formData: FormData) {
     throw new Error(raw.error.issues[0].message);
   }
 
-  const prospect = await db.prospect.create({ data: raw.data });
+  const currentUser = await db.user.findUnique({
+    where: { email: session.user.email! },
+    select: { id: true },
+  });
+
+  const prospect = await db.prospect.create({
+    data: { ...raw.data, scannedById: currentUser?.id },
+  });
 
   redirect(`/dashboard/prospects/${prospect.id}/generate`);
 }
