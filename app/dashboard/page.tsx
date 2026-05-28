@@ -136,7 +136,15 @@ export default async function DashboardPage({
                       {p.websiteUrl && (
                         <>
                           <Globe className="w-3 h-3" />
-                          {new URL(p.websiteUrl).hostname}
+                          <a
+                            href={p.websiteUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="hover:text-stone-700 hover:underline underline-offset-2 transition-colors"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            {new URL(p.websiteUrl).hostname}
+                          </a>
                         </>
                       )}
                     </p>

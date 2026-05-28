@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { saveBrandGuide } from "@/app/actions/save-brand-guide";
+import { ClearCacheButton } from "./clear-cache-button";
 
 export default async function BrandPage() {
   const session = await getServerSession(authOptions);
@@ -172,6 +173,22 @@ export default async function BrandPage() {
               Open current brand guide →
             </a>
           )}
+        </section>
+
+        {/* Dev / Testing tools */}
+        <section className="border border-dashed border-stone-200 rounded-xl p-4 mt-2">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xs font-semibold text-stone-400 uppercase tracking-wider mb-0.5">
+                Developer Tools
+              </h2>
+              <p className="text-xs text-stone-400">
+                Scrape cache: clears all cached prospect data so URLs are
+                re-scraped fresh on next import.
+              </p>
+            </div>
+            <ClearCacheButton />
+          </div>
         </section>
       </div>
     </main>

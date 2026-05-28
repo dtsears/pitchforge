@@ -61,6 +61,18 @@ export function ProspectForm() {
               Import
             </button>
           </div>
+          <div className="mt-3 flex items-center justify-between">
+            <label className="flex items-center gap-2 cursor-pointer select-none">
+              <input
+                type="checkbox"
+                name="force"
+                className="accent-stone-900 w-3.5 h-3.5"
+              />
+              <span className="text-xs text-stone-400">
+                Force re-scrape (bypass cache)
+              </span>
+            </label>
+          </div>
           {scrapeError && (
             <div className="mt-3 flex items-start gap-2 text-red-600 text-sm">
               <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
