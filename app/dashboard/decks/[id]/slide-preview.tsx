@@ -1,8 +1,9 @@
 "use client";
 
 const BLUEHOST_BLUE = "#003087";
-const BLUEHOST_LOGO =
-  "https://www.bluehost.com/content/dam/bluehost/global/logo/bluehost-logo.svg";
+// Hosted locally — no CDN dependency, no broken image risk
+const BLUEHOST_LOGO = "/bluehost-logo.svg";
+const BLUEHOST_LOGO_WHITE = "/bluehost-logo-white.svg";
 
 type SlidePreviewProps = {
   slide: { type: string; content: unknown };
@@ -29,7 +30,7 @@ export function SlidePreview({
       <div className="shrink-0 px-8 pt-3 flex justify-between items-center">
         <div />
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={BLUEHOST_LOGO} alt="Bluehost" className="h-3.5 opacity-75" />
+        <img src={BLUEHOST_LOGO} alt="Bluehost" className="h-4" />
       </div>
 
       {/* ── Slide body ── */}
@@ -66,11 +67,7 @@ export function SlidePreview({
         style={{ backgroundColor: BLUEHOST_BLUE }}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={BLUEHOST_LOGO}
-          alt="Bluehost"
-          className="h-3 brightness-0 invert opacity-90"
-        />
+        <img src={BLUEHOST_LOGO_WHITE} alt="Bluehost" className="h-3.5" />
         <span className="text-white/40 text-[9px] tracking-wider uppercase">
           Confidential
         </span>
@@ -106,7 +103,7 @@ function CoverSlide({
         >
           {content.headline as string}
         </h1>
-        <p className="text-sm text-stone-500 max-w-sm leading-relaxed">
+        <p className="text-sm text-stone-700 max-w-sm leading-relaxed">
           {content.subheadline as string}
         </p>
       </div>
@@ -344,16 +341,24 @@ function ProofSlide({
   content: Record<string, unknown>;
   prospectColor: string;
 }) {
-  const sourceUrl = content.sourceUrl as string | null | undefined;
+  // sourceUrl is injected post-generation from the DB, not from Claude
+  const rawSourceUrl = content.sourceUrl;
+  const sourceUrl =
+    rawSourceUrl &&
+    typeof rawSourceUrl === "string" &&
+    rawSourceUrl !== "null" &&
+    rawSourceUrl.startsWith("http")
+      ? rawSourceUrl
+      : null;
 
   return (
     <div className="flex h-full">
       {/* Left: the metric — hero element */}
       <div
         className="w-2/5 flex flex-col justify-center px-8 py-6 border-r border-stone-100"
-        style={{ backgroundColor: prospectColor + "08" }}
+        style={{ backgroundColor: prospectColor + "12" }}
       >
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-stone-400 mb-2">
+        <p className="text-[10px] font-semibold uppercase tracking-widest text-stone-500 mb-2">
           Proven Results
         </p>
         <p
@@ -362,10 +367,10 @@ function ProofSlide({
         >
           {content.headlineMetric as string}
         </p>
-        <p className="text-xs text-stone-500 font-medium">
+        <p className="text-xs text-stone-700 font-semibold">
           {content.customerName as string}
         </p>
-        <p className="text-[10px] text-stone-400">{content.industry as string}</p>
+        <p className="text-[10px] text-stone-500">{content.industry as string}</p>
       </div>
 
       {/* Right: narrative */}
@@ -376,23 +381,25 @@ function ProofSlide({
         >
           {content.title as string}
         </h2>
-        <p className="text-xs text-stone-600 leading-relaxed mb-4">
+        <p className="text-xs text-stone-700 leading-relaxed mb-4">
           {content.narrative as string}
         </p>
-        <div className="border-t border-stone-100 pt-3 flex items-center justify-between">
-          <p className="text-[10px] text-stone-400">
-            {(content.productsUsed as string[])?.join(", ")}
+        <div className="border-t border-stone-200 pt-3 flex items-center justify-between">
+          <p className="text-[10px] text-stone-500 font-medium">
+            {(content.productsUsed as string[])?.join(" · ")}
           </p>
-          {sourceUrl && sourceUrl !== "null" && (
+          {sourceUrl ? (
             <a
               href={sourceUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[10px] font-semibold hover:underline"
-              style={{ color: prospectColor }}
+              className="text-[10px] font-bold hover:underline"
+              style={{ color: BLUEHOST_BLUE }}
             >
-              Read full story →
+              Read full case study →
             </a>
+          ) : (
+            <span className="text-[10px] text-stone-300">No link available</span>
           )}
         </div>
       </div>

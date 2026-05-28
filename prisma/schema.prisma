@@ -87,6 +87,7 @@ model Product {
   name               String
   description        String
   iconUrl            String?
+  category           String?      // "Hosting" | "Agency" | "AI" | "eCommerce" | "Professional Services"
   targetBuyerProfile String
   slideContentBlocks Json
   createdAt          DateTime     @default(now())

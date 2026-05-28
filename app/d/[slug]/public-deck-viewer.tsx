@@ -32,9 +32,8 @@ export function PublicDeckViewer({ deck }: { deck: Deck }) {
     <div className="min-h-screen bg-stone-100 flex flex-col">
       {/* Minimal public header */}
       <header className="border-b border-stone-200 bg-white px-6 h-12 flex items-center justify-between">
-        <span className="text-display text-sm font-semibold text-stone-900">
-          {deck.org.name}
-        </span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/bluehost-logo.svg" alt="Bluehost" className="h-5" />
         <span className="text-xs text-stone-400">
           Prepared for {deck.prospect.companyName}
         </span>

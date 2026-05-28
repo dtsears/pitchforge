@@ -6,8 +6,11 @@ import { generateDeckAction } from "@/app/actions/generate-deck";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { GenerateButton } from "./generate-button";
+import { ProductGroups } from "./product-groups";
 
 export const maxDuration = 60;
+
+const CATEGORY_ORDER = ["Hosting", "Agency", "AI", "eCommerce", "Professional Services"];
 
 export default async function GeneratePage({
   params,
@@ -18,14 +21,57 @@ export default async function GeneratePage({
   if (!session?.user) redirect("/login");
 
   const [prospect, products] = await Promise.all([
-    db.prospect.findUnique({ where: { id: params.id } }),
+    db.prospect.findUnique({
+      where: { id: params.id },
+      select: {
+        id: true,
+        companyName: true,
+        industry: true,
+        websiteUrl: true,
+        primaryColor: true,
+        inferredPains: true,
+        topOfferings: true,
+        signals: true,
+        techStack: true,
+      },
+    }),
     db.product.findMany({
       where: { org: { domain: "bluehost.com" } },
       orderBy: { name: "asc" },
+      select: {
+        id: true,
+        name: true,
+        description: true,
+        category: true,
+        targetBuyerProfile: true,
+      },
     }),
   ]);
 
   if (!prospect) notFound();
+
+  // Group products by category
+  const grouped = CATEGORY_ORDER.reduce<Record<string, typeof products>>(
+    (acc, cat) => {
+      const items = products.filter((p) => (p.category ?? "Other") === cat);
+      if (items.length > 0) acc[cat] = items;
+      return acc;
+    },
+    {}
+  );
+  // Uncategorized fallback
+  const uncategorized = products.filter(
+    (p) => !p.category || !CATEGORY_ORDER.includes(p.category)
+  );
+  if (uncategorized.length > 0) grouped["Other"] = uncategorized;
+
+  // Parse topOfferings for display
+  type Offering = { name: string; fitScore: number; fitReason: string };
+  const topOfferings = (prospect.topOfferings ?? []) as Offering[];
+  type Signals = { websiteMaintenance: boolean; aiMentioned: boolean; webDevelopment: boolean; seoMentioned: boolean };
+  const signals = prospect.signals as Signals | null;
+  type TechStack = { hosting: string | null; cms: string | null; detected: string[] };
+  const techStack = prospect.techStack as TechStack | null;
 
   return (
     <main className="min-h-screen bg-stone-50">
@@ -38,87 +84,155 @@ export default async function GeneratePage({
           Back to dashboard
         </Link>
 
-        <div className="mb-8">
+        <div className="mb-6">
           <p className="text-xs font-semibold text-amber-600 uppercase tracking-wider mb-1">
-            Prospect saved
+            Generate Deck
           </p>
-          <h1 className="text-display text-3xl font-semibold text-stone-900 mb-1">
-            Generate a deck for {prospect.companyName}
+          <h1 className="text-display text-3xl font-semibold text-stone-900">
+            {prospect.companyName}
           </h1>
-          <p className="text-stone-500 text-sm">
-            Select the Bluehost products that best fit this prospect. Claude
-            will write all 8 slides.
-          </p>
+          {prospect.industry && (
+            <p className="text-stone-500 text-sm mt-0.5">{prospect.industry}</p>
+          )}
         </div>
 
-        <form action={generateDeckAction}>
-          <input type="hidden" name="prospectId" value={prospect.id} />
+        <div className="grid grid-cols-5 gap-6">
+          {/* Left: prospect intel */}
+          <div className="col-span-2 space-y-4">
+            {/* Top offerings */}
+            {topOfferings.length > 0 && (
+              <div className="bg-white border border-stone-200 rounded-xl p-4">
+                <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-3">
+                  Their Top Offerings
+                </p>
+                <div className="space-y-3">
+                  {topOfferings.map((o, i) => (
+                    <div key={i}>
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-xs font-semibold text-stone-900">{o.name}</span>
+                        <span
+                          className="text-xs font-bold"
+                          style={{
+                            color:
+                              o.fitScore >= 80
+                                ? "#16a34a"
+                                : o.fitScore >= 50
+                                ? "#d97706"
+                                : "#9ca3af",
+                          }}
+                        >
+                          {o.fitScore}% fit
+                        </span>
+                      </div>
+                      <div className="w-full h-1 bg-stone-100 rounded-full overflow-hidden mb-1">
+                        <div
+                          className="h-full rounded-full"
+                          style={{
+                            width: `${o.fitScore}%`,
+                            backgroundColor:
+                              o.fitScore >= 80
+                                ? "#16a34a"
+                                : o.fitScore >= 50
+                                ? "#d97706"
+                                : "#d6d3d1",
+                          }}
+                        />
+                      </div>
+                      <p className="text-[10px] text-stone-400 leading-relaxed">{o.fitReason}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
-          {/* Prospect summary */}
-          <div className="mb-8 p-4 bg-white border border-stone-200 rounded-xl">
-            <div className="flex items-start gap-3">
-              {prospect.primaryColor && (
-                <div
-                  className="w-10 h-10 rounded-lg shrink-0 border border-stone-100 mt-0.5"
-                  style={{ backgroundColor: prospect.primaryColor }}
-                />
-              )}
-              <div>
-                <p className="font-medium text-stone-900">
-                  {prospect.companyName}
+            {/* Signals */}
+            {signals && (
+              <div className="bg-white border border-stone-200 rounded-xl p-4">
+                <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-3">
+                  Signals
                 </p>
-                <p className="text-xs text-stone-400 mt-0.5">
-                  {prospect.industry && `${prospect.industry} · `}
-                  {prospect.websiteUrl}
+                <div className="space-y-1.5">
+                  {[
+                    { label: "Website Maintenance", val: signals.websiteMaintenance },
+                    { label: "AI Mentioned", val: signals.aiMentioned },
+                    { label: "Web Development", val: signals.webDevelopment },
+                    { label: "SEO Focus", val: signals.seoMentioned },
+                  ].map(({ label, val }) => (
+                    <div key={label} className="flex items-center gap-2">
+                      <div
+                        className={`w-1.5 h-1.5 rounded-full ${val ? "bg-green-500" : "bg-stone-200"}`}
+                      />
+                      <span className={`text-xs ${val ? "text-stone-700 font-medium" : "text-stone-400"}`}>
+                        {label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Tech stack */}
+            {techStack && (techStack.hosting || techStack.cms) && (
+              <div className="bg-white border border-stone-200 rounded-xl p-4">
+                <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">
+                  Tech Stack
                 </p>
-                {prospect.inferredPains.length > 0 && (
-                  <p className="text-xs text-stone-500 mt-1.5">
-                    Pains: {prospect.inferredPains.slice(0, 2).join(" · ")}
+                {techStack.hosting && (
+                  <p className="text-xs text-stone-600">
+                    <span className="text-stone-400">Hosting:</span>{" "}
+                    <strong>{techStack.hosting}</strong>
+                  </p>
+                )}
+                {techStack.cms && techStack.cms !== techStack.hosting && (
+                  <p className="text-xs text-stone-600 mt-1">
+                    <span className="text-stone-400">CMS:</span>{" "}
+                    <strong>{techStack.cms}</strong>
                   </p>
                 )}
               </div>
-            </div>
+            )}
+
+            {/* Pains */}
+            {prospect.inferredPains.length > 0 && (
+              <div className="bg-white border border-stone-200 rounded-xl p-4">
+                <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">
+                  Inferred Pains
+                </p>
+                <ul className="space-y-1.5">
+                  {prospect.inferredPains.map((p, i) => (
+                    <li key={i} className="text-xs text-stone-600 flex items-start gap-1.5">
+                      <span className="text-amber-500 mt-0.5 shrink-0">·</span>
+                      {p}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
 
-          {/* Product selection */}
-          <h2 className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-4">
-            Select products to pitch
-          </h2>
-          <div className="grid grid-cols-1 gap-3 mb-8">
-            {products.map((product) => (
-              <label
-                key={product.id}
-                className="flex items-start gap-4 p-4 bg-white border border-stone-200 rounded-xl cursor-pointer hover:border-stone-400 transition-colors has-[:checked]:border-stone-900 has-[:checked]:bg-stone-50"
-              >
-                <input
-                  type="checkbox"
-                  name="productIds"
-                  value={product.id}
-                  className="mt-1 accent-stone-900"
-                />
-                <div>
-                  <p className="text-sm font-medium text-stone-900">
-                    {product.name}
-                  </p>
-                  <p className="text-xs text-stone-500 mt-0.5 leading-relaxed">
-                    {product.description}
-                  </p>
-                </div>
-              </label>
-            ))}
-          </div>
+          {/* Right: product selection */}
+          <div className="col-span-3">
+            <form action={generateDeckAction}>
+              <input type="hidden" name="prospectId" value={prospect.id} />
 
-          {/* Actions */}
-          <div className="flex items-center gap-4">
-            <GenerateButton />
-            <Link
-              href="/dashboard"
-              className="text-sm text-stone-400 hover:text-stone-700 transition-colors"
-            >
-              Skip for now
-            </Link>
+              <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-4">
+                Select Products to Pitch
+              </p>
+
+              <ProductGroups grouped={grouped} />
+
+              <div className="flex items-center gap-4 mt-6">
+                <GenerateButton />
+                <Link
+                  href="/dashboard"
+                  className="text-sm text-stone-400 hover:text-stone-700 transition-colors"
+                >
+                  Skip for now
+                </Link>
+              </div>
+            </form>
           </div>
-        </form>
+        </div>
       </div>
     </main>
   );

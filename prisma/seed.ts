@@ -48,6 +48,7 @@ async function main() {
   const products = [
     // ── Core hosting products (brand voice updated per guidelines) ──────────
     {
+      category: "Hosting",
       name: "WordPress Pro",
       description:
         "Fast WordPress hosting, even in traffic spikes. Includes automatic updates, daily backups, staging environments, and 24/7 WordPress expert support. Breathe easier — we handle the technical side.",
@@ -65,6 +66,7 @@ async function main() {
       },
     },
     {
+      category: "Hosting",
       name: "Cloud Hosting",
       description:
         "Extra CPU and RAM during traffic spikes — automatically. Scalable cloud infrastructure that grows with your business without manual intervention or over-provisioning.",
@@ -82,6 +84,7 @@ async function main() {
       },
     },
     {
+      category: "Agency",
       name: "Agency Partner Program",
       description:
         "Business hosting. Human support. One dashboard for every client site you manage — with white-label options, wholesale pricing, and priority 24/7 phone and chat support.",
@@ -99,6 +102,7 @@ async function main() {
       },
     },
     {
+      category: "AI",
       name: "Bluehost AI Builder",
       description:
         "Your website. Built by AI. Backed by Bluehost. From a single prompt or Instagram handle to a fully published, hosted WordPress website — no code, no confusion, no blank page paralysis.",
@@ -116,6 +120,7 @@ async function main() {
       },
     },
     {
+      category: "eCommerce",
       name: "WooCommerce Hosting",
       description:
         "Whip up an ultrafast online store. Hosting optimized for WooCommerce with built-in caching, PCI-compliant infrastructure, and automatic plugin updates so you can focus on selling.",
@@ -133,6 +138,7 @@ async function main() {
       },
     },
     {
+      category: "Hosting",
       name: "VPS Hosting",
       description:
         "Our VPS hosting. Your tech playground. Full root access, dedicated resources, and complete control — without the cost of a dedicated server.",
@@ -151,6 +157,7 @@ async function main() {
     },
     // ── New AI-powered products (from brand guide) ──────────────────────────
     {
+      category: "AI",
       name: "BLU Agent — AI Front Desk",
       description:
         "Losing leads after closing time? BLU Agent provides 24/7 AI sales support and instant appointment booking across Web, SMS, WhatsApp, and Instagram. Increase revenue without increasing your team.",
@@ -170,6 +177,7 @@ async function main() {
       },
     },
     {
+      category: "AI",
       name: "BLU LLM All-Access",
       description:
         "All your AI favorites — ChatGPT 5, Gemini 3, Claude 4.5, and Grok 4.1 — in one dashboard for $20/month. Stop managing multiple subscriptions. Stop paying $100+ for tools you use separately.",
@@ -201,6 +209,7 @@ async function main() {
       await prisma.product.update({
         where: { id: existing.id },
         data: {
+          category: p.category ?? null,
           description: p.description,
           targetBuyerProfile: p.targetBuyerProfile,
           slideContentBlocks: p.slideContentBlocks,
