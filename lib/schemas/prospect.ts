@@ -19,6 +19,10 @@ export const TechStackSchema = z.object({
   hosting: z.string().nullish().transform((v) => v ?? null),
   cms: z.string().nullish().transform((v) => v ?? null),
   detected: z.array(z.string()),
+  // DNS-derived intel
+  nameservers: z.array(z.string()).optional(),
+  dnsHost: z.string().nullish().transform((v) => v ?? null),
+  emailProvider: z.string().nullish().transform((v) => v ?? null),
 });
 
 export type Offering = z.infer<typeof OfferingSchema>;

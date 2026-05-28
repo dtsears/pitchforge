@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { GenerateButton } from "./generate-button";
 import { ProductGroups } from "./product-groups";
+import type { TechStack, Signals, Offering } from "@/lib/schemas/prospect";
 
 export const maxDuration = 60;
 
@@ -65,12 +66,9 @@ export default async function GeneratePage({
   );
   if (uncategorized.length > 0) grouped["Other"] = uncategorized;
 
-  // Parse topOfferings for display
-  type Offering = { name: string; fitScore: number; fitReason: string };
+  // Parse enriched scrape data
   const topOfferings = (prospect.topOfferings ?? []) as Offering[];
-  type Signals = { websiteMaintenance: boolean; aiMentioned: boolean; webDevelopment: boolean; seoMentioned: boolean };
   const signals = prospect.signals as Signals | null;
-  type TechStack = { hosting: string | null; cms: string | null; detected: string[] };
   const techStack = prospect.techStack as TechStack | null;
 
   return (
@@ -172,18 +170,24 @@ export default async function GeneratePage({
             )}
 
             {/* Tech stack */}
-            {techStack && (techStack.hosting || techStack.cms) && (
+            {techStack && (techStack.dnsHost ?? techStack.hosting ?? techStack.cms ?? techStack.emailProvider) && (
               <div className="bg-white border border-stone-200 rounded-xl p-4">
                 <p className="text-xs font-semibold text-stone-500 uppercase tracking-wider mb-2">
                   Tech Stack
                 </p>
-                {techStack.hosting && (
+                {(techStack.dnsHost ?? techStack.hosting) && (
                   <p className="text-xs text-stone-600">
                     <span className="text-stone-400">Hosting:</span>{" "}
-                    <strong>{techStack.hosting}</strong>
+                    <strong>{techStack.dnsHost ?? techStack.hosting}</strong>
                   </p>
                 )}
-                {techStack.cms && techStack.cms !== techStack.hosting && (
+                {techStack.emailProvider && (
+                  <p className="text-xs text-stone-600 mt-1">
+                    <span className="text-stone-400">Email:</span>{" "}
+                    <strong>{techStack.emailProvider}</strong>
+                  </p>
+                )}
+                {techStack.cms && techStack.cms !== (techStack.dnsHost ?? techStack.hosting) && (
                   <p className="text-xs text-stone-600 mt-1">
                     <span className="text-stone-400">CMS:</span>{" "}
                     <strong>{techStack.cms}</strong>

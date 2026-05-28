@@ -5,6 +5,7 @@ import {
   type ExtractedProspect,
 } from "@/lib/schemas/prospect";
 import { detectTechStack } from "@/lib/tech-detect";
+import { lookupDns } from "@/lib/dns-lookup";
 import type { ScrapeResult } from "@/lib/scrape";
 
 // Verify this model ID at console.anthropic.com if extraction fails
@@ -30,8 +31,20 @@ export async function extractProspectData(
     "";
   const logoUrl = resolveUrl(ogImage || rawFavicon, url);
 
-  // ── Tech stack (HTML pattern matching) ────────────────────────────────
-  const techStack = detectTechStack(scraped.html);
+  // ── Tech stack + DNS lookup (run in parallel) ────────────────────────
+  const [techStack, dnsIntel] = await Promise.all([
+    Promise.resolve(detectTechStack(scraped.html)),
+    lookupDns(url),
+  ]);
+
+  // DNS host takes priority over HTML-detected hosting (more reliable)
+  const mergedTechStack = {
+    ...techStack,
+    hosting: dnsIntel.dnsHost ?? techStack.hosting,
+    nameservers: dnsIntel.nameservers,
+    dnsHost: dnsIntel.dnsHost,
+    emailProvider: dnsIntel.emailProvider,
+  };
 
   // ── Page content for Claude ───────────────────────────────────────────
   const markdownExcerpt = scraped.markdown.slice(0, 3500);
@@ -42,6 +55,8 @@ Site name: ${siteName}
 Page title: ${title}
 Meta description: ${description}
 Detected tech: ${techStack.detected.join(", ") || "none detected"}
+DNS host: ${dnsIntel.dnsHost ?? "unknown"}
+Email provider: ${dnsIntel.emailProvider ?? "unknown"}
 Page content (markdown):
 ${markdownExcerpt}
 `.trim();
@@ -95,8 +110,8 @@ For topOfferings fitScore: 90-100 = ideal Bluehost prospect (agency, eCommerce, 
   const cleaned = raw.replace(/^```json?\s*/i, "").replace(/```\s*$/, "");
   const parsed = JSON.parse(cleaned) as Record<string, unknown>;
 
-  // Inject tech stack (detected from HTML, not from Claude)
-  parsed.techStack = techStack;
+  // Inject merged tech stack (HTML patterns + DNS intel, not from Claude)
+  parsed.techStack = mergedTechStack;
 
   // Ensure logoUrl if Claude returned null but we found one
   if (!parsed.logoUrl && logoUrl) parsed.logoUrl = logoUrl;

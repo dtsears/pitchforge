@@ -132,8 +132,14 @@ export function ProspectForm() {
                 <span className="text-xs font-semibold text-stone-500 uppercase tracking-wider">Tech Stack</span>
               </div>
               <div className="flex flex-wrap gap-2">
-                {extracted.techStack.hosting && (
+                {extracted.techStack.dnsHost && (
+                  <TechBadge label={`Hosted: ${extracted.techStack.dnsHost}`} type="hosting" />
+                )}
+                {!extracted.techStack.dnsHost && extracted.techStack.hosting && (
                   <TechBadge label={extracted.techStack.hosting} type="hosting" />
+                )}
+                {extracted.techStack.emailProvider && (
+                  <TechBadge label={`Email: ${extracted.techStack.emailProvider}`} type="email" />
                 )}
                 {extracted.techStack.cms && extracted.techStack.cms !== extracted.techStack.hosting && (
                   <TechBadge label={extracted.techStack.cms} type="cms" />
@@ -144,10 +150,15 @@ export function ProspectForm() {
                     <TechBadge key={tech} label={tech} type="other" />
                   ))
                 }
-                {!extracted.techStack.hosting && !extracted.techStack.cms && extracted.techStack.detected.length === 0 && (
+                {!extracted.techStack.dnsHost && !extracted.techStack.hosting && !extracted.techStack.cms && extracted.techStack.detected.length === 0 && (
                   <span className="text-xs text-stone-400">No tech stack detected</span>
                 )}
               </div>
+              {extracted.techStack.nameservers && extracted.techStack.nameservers.length > 0 && (
+                <p className="text-[10px] text-stone-300 mt-2 font-mono truncate">
+                  NS: {extracted.techStack.nameservers.slice(0, 2).join(", ")}
+                </p>
+              )}
             </div>
           )}
 
@@ -270,13 +281,14 @@ export function ProspectForm() {
 
 // ── Sub-components ──────────────────────────────────────────────────────────
 
-function TechBadge({ label, type }: { label: string; type: "hosting" | "cms" | "other" }) {
+function TechBadge({ label, type }: { label: string; type: "hosting" | "cms" | "email" | "other" }) {
   const colors = {
     hosting: "bg-blue-50 border-blue-200 text-blue-700",
     cms: "bg-purple-50 border-purple-200 text-purple-700",
+    email: "bg-green-50 border-green-200 text-green-700",
     other: "bg-stone-50 border-stone-200 text-stone-600",
   };
-  const prefix = { hosting: "Hosting: ", cms: "CMS: ", other: "" };
+  const prefix = { hosting: "", cms: "", email: "", other: "" };
   return (
     <span className={`inline-flex items-center px-2.5 py-1 rounded-full border text-xs font-medium ${colors[type]}`}>
       {prefix[type]}{label}

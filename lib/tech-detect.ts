@@ -139,6 +139,10 @@ export function detectTechStack(html: string): TechStack {
     hosting,
     cms,
     detected: Array.from(new Set(detected)),
+    // DNS fields populated later in extract.ts after lookupDns()
+    dnsHost: null,
+    emailProvider: null,
+    nameservers: [],
   };
 }
 
