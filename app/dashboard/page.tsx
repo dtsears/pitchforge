@@ -45,12 +45,12 @@ export default async function DashboardPage({
         primaryColor: true,
         createdAt: true,
         scannedBy: { select: { name: true } },
+        // Fetch up to 10 decks — count locally to avoid _count+select issues in Prisma 7
         decks: {
           select: { id: true, publicSlug: true },
           orderBy: { createdAt: "desc" },
-          take: 1,
+          take: 10,
         },
-        _count: { select: { decks: true } },
       },
     }),
   ]);
@@ -195,7 +195,7 @@ export default async function DashboardPage({
                     )}
                     <DeleteProspectButton
                       prospectId={p.id}
-                      deckCount={p._count.decks}
+                      deckCount={p.decks.length}
                     />
                   </div>
                 </div>
