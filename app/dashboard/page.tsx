@@ -6,6 +6,14 @@ import Link from "next/link";
 import { Plus, Building2, Globe, Presentation, Send } from "lucide-react";
 import { DeleteProspectButton } from "./delete-prospect-button";
 
+function safeHostname(url: string): string {
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return url;
+  }
+}
+
 export default async function DashboardPage({
   searchParams,
 }: {
@@ -143,7 +151,7 @@ export default async function DashboardPage({
                             className="hover:text-stone-700 hover:underline underline-offset-2 transition-colors"
                             onClick={(e) => e.stopPropagation()}
                           >
-                            {new URL(p.websiteUrl).hostname}
+                            {safeHostname(p.websiteUrl)}
                           </a>
                         </>
                       )}
