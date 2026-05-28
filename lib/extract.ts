@@ -32,9 +32,11 @@ export async function extractProspectData(
   const logoUrl = resolveUrl(ogImage || rawFavicon, url);
 
   // ── Tech stack + DNS lookup (run in parallel) ────────────────────────
+  // DNS is best-effort — any failure returns empty intel, never crashes the scrape
+  const EMPTY_DNS = { nameservers: [], dnsHost: null, emailProvider: null };
   const [techStack, dnsIntel] = await Promise.all([
     Promise.resolve(detectTechStack(scraped.html)),
-    lookupDns(url),
+    lookupDns(url).catch(() => EMPTY_DNS),
   ]);
 
   // DNS host takes priority over HTML-detected hosting (more reliable)

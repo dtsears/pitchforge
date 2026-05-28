@@ -1,4 +1,5 @@
-import { promises as dns } from "dns";
+// Use explicit node: prefix to ensure Node.js built-in resolution
+import { promises as dns } from "node:dns";
 
 export type DnsIntel = {
   nameservers: string[];
@@ -14,9 +15,13 @@ export async function lookupDns(url: string): Promise<DnsIntel> {
     return { nameservers: [], dnsHost: null, emailProvider: null };
   }
 
+  // 5s timeout per lookup — DNS should never block the scrape
+  const timeout = <T>(p: Promise<T>): Promise<T> =>
+    Promise.race([p, new Promise<never>((_, rej) => setTimeout(() => rej(new Error("DNS timeout")), 5000))]);
+
   const [nsResult, mxResult] = await Promise.allSettled([
-    dns.resolveNs(hostname),
-    dns.resolveMx(hostname),
+    timeout(dns.resolveNs(hostname)),
+    timeout(dns.resolveMx(hostname)),
   ]);
 
   const nameservers =
