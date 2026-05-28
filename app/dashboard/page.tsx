@@ -147,7 +147,6 @@ export default async function DashboardPage({
                             target="_blank"
                             rel="noopener noreferrer"
                             className="hover:text-stone-700 hover:underline underline-offset-2 transition-colors"
-                            onClick={(e) => e.stopPropagation()}
                           >
                             {safeHostname(p.websiteUrl)}
                           </a>
