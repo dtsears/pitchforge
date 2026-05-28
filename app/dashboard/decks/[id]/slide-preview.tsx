@@ -1,9 +1,39 @@
 "use client";
 
-const BLUEHOST_BLUE = "#003087";
-// Hosted locally — no CDN dependency, no broken image risk
-const BLUEHOST_LOGO = "/bluehost-logo.svg";
-const BLUEHOST_LOGO_WHITE = "/bluehost-logo-white.svg";
+// Bluehost 2026 template — matched colors, fonts, and layouts
+const BH_BLUE = "#196CDF";      // Bluehost Blue 800 (headings, accents)
+const BH_NAVY = "#012957";      // Bluehost Blue Dark 1000 (dark panels)
+const BH_LOGO = "/bluehost-logo.svg";
+const BH_LOGO_WHITE = "/bluehost-logo-white.svg";
+
+// Inline style helpers to keep JSX readable
+const heading = (size = "2rem", color = BH_BLUE): React.CSSProperties => ({
+  fontFamily: "Poppins, ui-sans-serif, system-ui, sans-serif",
+  fontSize: size,
+  fontWeight: 700,
+  color,
+  lineHeight: 1.15,
+  letterSpacing: "-0.01em",
+});
+
+const body = (size = "0.85rem", color = "#1a1a1a"): React.CSSProperties => ({
+  fontFamily: "Poppins, ui-sans-serif, system-ui, sans-serif",
+  fontSize: size,
+  fontWeight: 400,
+  color,
+  lineHeight: 1.6,
+});
+
+const label = (color = BH_BLUE): React.CSSProperties => ({
+  fontFamily: "Poppins, ui-sans-serif, system-ui, sans-serif",
+  fontSize: "0.55rem",
+  fontWeight: 600,
+  textTransform: "uppercase" as const,
+  letterSpacing: "0.08em",
+  color,
+});
+
+import React from "react";
 
 type SlidePreviewProps = {
   slide: { type: string; content: unknown };
@@ -11,213 +41,273 @@ type SlidePreviewProps = {
   prospectName: string;
 };
 
-export function SlidePreview({
-  slide,
-  prospectColor,
-  prospectName,
-}: SlidePreviewProps) {
+export function SlidePreview({ slide, prospectColor, prospectName }: SlidePreviewProps) {
   const content = slide.content as Record<string, unknown>;
 
   return (
     <div className="w-full h-full flex flex-col bg-white overflow-hidden">
-      {/* ── Top accent bar: Bluehost blue left / prospect color right ── */}
-      <div className="flex h-1 shrink-0">
-        <div className="flex-1" style={{ backgroundColor: BLUEHOST_BLUE }} />
-        <div className="flex-1" style={{ backgroundColor: prospectColor }} />
+      {/* Accent bar: Bluehost blue left / prospect color right */}
+      <div className="flex h-[3px] shrink-0">
+        <div className="flex-1" style={{ backgroundColor: BH_BLUE }} />
+        <div className="w-1/3" style={{ backgroundColor: prospectColor }} />
       </div>
 
-      {/* ── Header: Bluehost logo top-right ── */}
-      <div className="shrink-0 px-8 pt-3 flex justify-between items-center">
-        <div />
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={BLUEHOST_LOGO} alt="Bluehost" className="h-4" />
-      </div>
-
-      {/* ── Slide body ── */}
+      {/* Slide body */}
       <div className="flex-1 overflow-hidden">
         {slide.type === "COVER" && (
           <CoverSlide content={content} prospectName={prospectName} prospectColor={prospectColor} />
         )}
-        {slide.type === "REP" && (
-          <RepSlide content={content} prospectColor={prospectColor} />
-        )}
-        {slide.type === "UNDERSTANDING" && (
-          <UnderstandingSlide content={content} prospectColor={prospectColor} />
-        )}
-        {slide.type === "WHY_NOW" && (
-          <WhyNowSlide content={content} prospectColor={prospectColor} />
-        )}
-        {slide.type === "SOLUTION" && (
-          <SolutionSlide content={content} prospectColor={prospectColor} />
-        )}
-        {slide.type === "PROOF" && (
-          <ProofSlide content={content} prospectColor={prospectColor} />
-        )}
-        {slide.type === "ROI" && (
-          <RoiSlide content={content} prospectColor={prospectColor} />
-        )}
-        {slide.type === "NEXT_STEPS" && (
-          <NextStepsSlide content={content} prospectColor={prospectColor} />
-        )}
+        {slide.type === "REP" && <RepSlide content={content} prospectColor={prospectColor} />}
+        {slide.type === "UNDERSTANDING" && <UnderstandingSlide content={content} prospectColor={prospectColor} />}
+        {slide.type === "WHY_NOW" && <WhyNowSlide content={content} prospectColor={prospectColor} />}
+        {slide.type === "SOLUTION" && <SolutionSlide content={content} prospectColor={prospectColor} />}
+        {slide.type === "PROOF" && <ProofSlide content={content} prospectColor={prospectColor} />}
+        {slide.type === "ROI" && <RoiSlide content={content} prospectColor={prospectColor} />}
+        {slide.type === "NEXT_STEPS" && <NextStepsSlide content={content} prospectColor={prospectColor} />}
       </div>
 
-      {/* ── Footer: Bluehost blue bar ── */}
-      <div
-        className="shrink-0 px-8 py-2 flex items-center justify-between"
-        style={{ backgroundColor: BLUEHOST_BLUE }}
-      >
+      {/* Footer: matches template — logo left, confidential right */}
+      <div className="shrink-0 px-5 py-1.5 flex items-center justify-between border-t border-stone-100">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={BLUEHOST_LOGO_WHITE} alt="Bluehost" className="h-3.5" />
-        <span className="text-white/40 text-[9px] tracking-wider uppercase">
-          Confidential
-        </span>
+        <img src={BH_LOGO} alt="Bluehost" className="h-3" />
+        <span style={{ ...label("#9ca3af") }}>Confidential 2026</span>
       </div>
     </div>
   );
 }
 
-// ─── 1. COVER ──────────────────────────────────────────────────────────────
+// ─── 1. COVER — matches Template Slide 2 ──────────────────────────────────
+// Left: dark navy panel | Right: logo + headline + prospect name
 
-function CoverSlide({
-  content,
-  prospectName,
-  prospectColor,
-}: {
-  content: Record<string, unknown>;
-  prospectName: string;
-  prospectColor: string;
+function CoverSlide({ content, prospectName, prospectColor }: {
+  content: Record<string, unknown>; prospectName: string; prospectColor: string;
 }) {
   return (
     <div className="flex h-full">
-      {/* Left: main content */}
-      <div className="flex-1 flex flex-col justify-center px-10 py-6">
-        <p
-          className="text-[10px] font-semibold uppercase tracking-widest mb-3"
-          style={{ color: prospectColor }}
-        >
-          Prepared for {prospectName}
-        </p>
-        <h1
-          className="text-display text-[26px] font-semibold text-stone-900 leading-tight mb-3"
-          style={{ letterSpacing: "-0.02em" }}
-        >
-          {content.headline as string}
-        </h1>
-        <p className="text-sm text-stone-700 max-w-sm leading-relaxed">
-          {content.subheadline as string}
-        </p>
-      </div>
-
-      {/* Right: prospect color panel */}
+      {/* Left: dark panel */}
       <div
-        className="w-32 flex flex-col items-center justify-center shrink-0"
-        style={{ backgroundColor: prospectColor + "18" }}
+        className="w-[42%] shrink-0 flex flex-col justify-end p-5"
+        style={{ backgroundColor: BH_NAVY }}
       >
         <div
-          className="w-12 h-12 rounded-full flex items-center justify-center text-white text-lg font-bold"
+          className="w-8 h-0.5 mb-3"
           style={{ backgroundColor: prospectColor }}
-        >
-          {prospectName[0]?.toUpperCase() ?? "?"}
-        </div>
-        <p className="text-[9px] text-center mt-2 px-2 font-medium" style={{ color: prospectColor }}>
-          {prospectName}
+        />
+        <p style={{ ...body("0.65rem", "rgba(255,255,255,0.5)") }}>
+          Prepared for
         </p>
+        <p style={{ ...heading("1rem", "white") }}>{prospectName}</p>
+      </div>
+
+      {/* Right: content */}
+      <div className="flex-1 flex flex-col justify-between p-5">
+        {/* Logo */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <div className="flex justify-end">
+          <img src={BH_LOGO} alt="Bluehost" className="h-4" />
+        </div>
+
+        {/* Headline */}
+        <div>
+          <p style={{ ...label(prospectColor) }} className="mb-2">
+            {prospectName}
+          </p>
+          <h1 style={{ ...heading("1.6rem", BH_BLUE) }} className="mb-3">
+            {content.headline as string}
+          </h1>
+          <p style={body("0.75rem", "#465D77")}>
+            {content.subheadline as string}
+          </p>
+        </div>
+
+        <div />
       </div>
     </div>
   );
 }
 
-// ─── 2. REP ────────────────────────────────────────────────────────────────
+// ─── 2. REP — matches Template Slide 6 ────────────────────────────────────
+// Panelist layout: large heading, photo circle, credentials bullets
 
-function RepSlide({
-  content,
-  prospectColor,
-}: {
-  content: Record<string, unknown>;
-  prospectColor: string;
+function RepSlide({ content, prospectColor }: {
+  content: Record<string, unknown>; prospectColor: string;
 }) {
   const specialties = (content.specialties as string[]) ?? [];
-
   return (
-    <div className="flex h-full items-center gap-8 px-10 py-6">
-      {/* Photo circle */}
-      <div className="shrink-0">
-        <div
-          className="w-20 h-20 rounded-full flex items-center justify-center text-white text-3xl font-bold"
-          style={{ backgroundColor: BLUEHOST_BLUE }}
-        >
-          {(content.name as string)?.[0] ?? "D"}
-        </div>
-      </div>
-
-      {/* Info */}
-      <div className="flex-1 min-w-0">
-        <h2
-          className="text-display text-2xl font-semibold text-stone-900 mb-0.5"
-          style={{ letterSpacing: "-0.02em" }}
-        >
+    <div className="flex h-full">
+      {/* Left: info */}
+      <div className="flex-1 flex flex-col justify-center p-6">
+        <p style={label(BH_BLUE)} className="mb-2">Presenter</p>
+        <h2 style={heading("1.5rem", BH_NAVY)} className="mb-0.5">
           {content.name as string}
         </h2>
-        <p className="text-sm font-medium mb-0.5" style={{ color: prospectColor }}>
+        <p style={{ ...body("0.75rem"), color: BH_BLUE, fontWeight: 600 }} className="mb-0.5">
           {content.title as string}
         </p>
-        <p className="text-xs text-stone-400 mb-3">
+        <p style={body("0.65rem", "#465D77")} className="mb-4">
           {content.tenureYears as number} years at Bluehost
         </p>
-        <p className="text-xs text-stone-600 leading-relaxed mb-4 max-w-lg">
+        <p style={body("0.72rem")} className="mb-4 max-w-xs leading-relaxed">
           {content.bio as string}
         </p>
         <div className="flex flex-wrap gap-1.5">
           {specialties.map((s) => (
             <span
               key={s}
-              className="text-[10px] px-2 py-0.5 rounded-full border font-medium"
-              style={{ borderColor: prospectColor + "60", color: prospectColor }}
+              style={{
+                fontFamily: "Poppins, ui-sans-serif, system-ui, sans-serif",
+                fontSize: "0.6rem",
+                fontWeight: 600,
+                color: BH_BLUE,
+                border: `1px solid ${BH_BLUE}40`,
+                borderRadius: "99px",
+                padding: "2px 8px",
+              }}
             >
               {s}
             </span>
           ))}
         </div>
       </div>
+
+      {/* Right: photo circle */}
+      <div
+        className="w-[35%] shrink-0 flex items-center justify-center"
+        style={{ backgroundColor: BH_BLUE + "0D" }}
+      >
+        <div
+          className="w-24 h-24 rounded-full flex items-center justify-center text-white text-3xl font-bold"
+          style={{ backgroundColor: BH_BLUE, fontFamily: "Poppins, sans-serif" }}
+        >
+          {(content.name as string)?.[0] ?? "D"}
+        </div>
+      </div>
     </div>
   );
 }
 
-// ─── 3. UNDERSTANDING ──────────────────────────────────────────────────────
+// ─── 3. UNDERSTANDING — matches Template Slide 24 ─────────────────────────
+// Left: title + numbered pain points | Right: color panel
 
-function UnderstandingSlide({
-  content,
-  prospectColor,
-}: {
-  content: Record<string, unknown>;
-  prospectColor: string;
+function UnderstandingSlide({ content, prospectColor }: {
+  content: Record<string, unknown>; prospectColor: string;
 }) {
-  const painPoints =
-    (content.painPoints as { headline: string; description: string }[]) ?? [];
-
+  const painPoints = (content.painPoints as { headline: string; description: string }[]) ?? [];
   return (
-    <div className="flex flex-col h-full px-10 py-6">
-      <h2
-        className="text-display text-xl font-semibold text-stone-900 mb-5"
-        style={{ letterSpacing: "-0.02em" }}
-      >
+    <div className="flex h-full">
+      {/* Left: content */}
+      <div className="flex-1 flex flex-col justify-center p-6">
+        <h2 style={heading("1.3rem", BH_NAVY)} className="mb-5">
+          {content.title as string}
+        </h2>
+        <div className="space-y-3">
+          {painPoints.map((p, i) => (
+            <div key={i} className="flex gap-3 items-start">
+              <div
+                className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-white"
+                style={{ backgroundColor: BH_BLUE, fontSize: "0.55rem", fontWeight: 700, fontFamily: "Poppins, sans-serif" }}
+              >
+                {i + 1}
+              </div>
+              <div>
+                <p style={{ ...body("0.72rem"), fontWeight: 600, color: "#1a1a1a" }}>
+                  {p.headline}
+                </p>
+                <p style={body("0.65rem", "#465D77")}>{p.description}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Right: accent panel */}
+      <div
+        className="w-[32%] shrink-0"
+        style={{ backgroundColor: BH_BLUE + "0D", borderLeft: `3px solid ${BH_BLUE}` }}
+      />
+    </div>
+  );
+}
+
+// ─── 4. WHY NOW — matches Template Slide 21 ───────────────────────────────
+// Left: title + trigger block + urgency bullets | Right: color panel
+
+function WhyNowSlide({ content, prospectColor }: {
+  content: Record<string, unknown>; prospectColor: string;
+}) {
+  const urgencyPoints = (content.urgencyPoints as string[]) ?? [];
+  return (
+    <div className="flex h-full">
+      <div className="flex-1 flex flex-col justify-center p-6">
+        <h2 style={heading("1.3rem", BH_NAVY)} className="mb-3">
+          {content.title as string}
+        </h2>
+
+        {/* Trigger block */}
+        <div
+          className="rounded-lg px-3 py-2.5 mb-3"
+          style={{ backgroundColor: BH_BLUE + "0D", borderLeft: `3px solid ${BH_BLUE}` }}
+        >
+          <p style={label(BH_BLUE)} className="mb-1">Trigger Event</p>
+          <p style={{ ...body("0.72rem"), fontWeight: 600, color: BH_NAVY }}>
+            {content.triggerEvent as string}
+          </p>
+          <p style={body("0.65rem", "#465D77")} className="mt-1">
+            {content.description as string}
+          </p>
+        </div>
+
+        <ul className="space-y-1.5">
+          {urgencyPoints.map((pt, i) => (
+            <li key={i} className="flex items-start gap-2">
+              <span style={{ color: BH_BLUE, fontWeight: 700, fontSize: "0.7rem", marginTop: "1px" }}>→</span>
+              <p style={body("0.65rem")}>{pt}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <div
+        className="w-[30%] shrink-0"
+        style={{ backgroundColor: BH_NAVY + "0A", borderLeft: `2px solid ${BH_BLUE}20` }}
+      />
+    </div>
+  );
+}
+
+// ─── 5. SOLUTION — matches Template Slide 42 ──────────────────────────────
+// Title + 4-row feature list with icon circles
+
+function SolutionSlide({ content, prospectColor }: {
+  content: Record<string, unknown>; prospectColor: string;
+}) {
+  const products = (content.products as { name: string; description: string; benefit: string }[]) ?? [];
+  return (
+    <div className="flex flex-col h-full p-5">
+      <h2 style={heading("1.2rem", BH_NAVY)} className="mb-1">
         {content.title as string}
       </h2>
-      <div className="space-y-4 flex-1">
-        {painPoints.map((p, i) => (
-          <div key={i} className="flex gap-4 items-start">
+      <p style={body("0.68rem", "#465D77")} className="mb-4">
+        {content.intro as string}
+      </p>
+
+      <div className={`grid gap-2.5 flex-1 content-start ${products.length <= 2 ? "grid-cols-1" : "grid-cols-2"}`}>
+        {products.map((p, i) => (
+          <div key={p.name} className="flex items-start gap-3">
+            {/* Icon circle */}
             <div
-              className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold mt-0.5"
-              style={{ backgroundColor: prospectColor }}
+              className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-white"
+              style={{ backgroundColor: i % 2 === 0 ? BH_BLUE : prospectColor, fontSize: "0.6rem", fontWeight: 700, fontFamily: "Poppins, sans-serif" }}
             >
               {i + 1}
             </div>
             <div>
-              <p className="text-sm font-semibold text-stone-900 mb-0.5">
-                {p.headline}
+              <p style={{ ...body("0.7rem"), fontWeight: 700, color: BH_NAVY }}>
+                {p.name}
               </p>
-              <p className="text-xs text-stone-500 leading-relaxed">
-                {p.description}
+              <p style={body("0.63rem", "#465D77")}>{p.description}</p>
+              <p style={{ ...body("0.63rem"), color: prospectColor, fontWeight: 600 }}>
+                {p.benefit}
               </p>
             </div>
           </div>
@@ -227,121 +317,12 @@ function UnderstandingSlide({
   );
 }
 
-// ─── 4. WHY NOW ────────────────────────────────────────────────────────────
+// ─── 6. PROOF — matches Template Slide 27 ─────────────────────────────────
+// Headline + stat cards grid | Right: narrative
 
-function WhyNowSlide({
-  content,
-  prospectColor,
-}: {
-  content: Record<string, unknown>;
-  prospectColor: string;
+function ProofSlide({ content, prospectColor }: {
+  content: Record<string, unknown>; prospectColor: string;
 }) {
-  const urgencyPoints = (content.urgencyPoints as string[]) ?? [];
-
-  return (
-    <div className="flex flex-col h-full px-10 py-6">
-      <h2
-        className="text-display text-xl font-semibold text-stone-900 mb-4"
-        style={{ letterSpacing: "-0.02em" }}
-      >
-        {content.title as string}
-      </h2>
-
-      {/* Trigger event — highlighted block */}
-      <div
-        className="rounded-xl px-4 py-3 mb-4 border-l-4"
-        style={{
-          backgroundColor: prospectColor + "10",
-          borderLeftColor: prospectColor,
-        }}
-      >
-        <p className="text-xs font-semibold uppercase tracking-wider mb-1" style={{ color: prospectColor }}>
-          Trigger Event
-        </p>
-        <p className="text-sm font-semibold text-stone-900">
-          {content.triggerEvent as string}
-        </p>
-        <p className="text-xs text-stone-500 mt-1 leading-relaxed">
-          {content.description as string}
-        </p>
-      </div>
-
-      {/* Urgency points */}
-      <ul className="space-y-2">
-        {urgencyPoints.map((pt, i) => (
-          <li key={i} className="flex items-start gap-2 text-xs text-stone-700">
-            <span className="font-bold shrink-0 mt-0.5" style={{ color: prospectColor }}>
-              →
-            </span>
-            {pt}
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-// ─── 5. SOLUTION ───────────────────────────────────────────────────────────
-
-function SolutionSlide({
-  content,
-  prospectColor,
-}: {
-  content: Record<string, unknown>;
-  prospectColor: string;
-}) {
-  const products =
-    (content.products as { name: string; description: string; benefit: string }[]) ?? [];
-
-  return (
-    <div className="flex flex-col h-full px-10 py-5">
-      <h2
-        className="text-display text-xl font-semibold text-stone-900 mb-1"
-        style={{ letterSpacing: "-0.02em" }}
-      >
-        {content.title as string}
-      </h2>
-      <p className="text-xs text-stone-500 mb-4">{content.intro as string}</p>
-
-      <div
-        className={`grid gap-3 flex-1 content-start ${
-          products.length <= 2 ? "grid-cols-2" : products.length === 3 ? "grid-cols-3" : "grid-cols-2"
-        }`}
-      >
-        {products.map((p) => (
-          <div
-            key={p.name}
-            className="rounded-xl border border-stone-100 p-3 bg-stone-50"
-          >
-            <p
-              className="text-[10px] font-semibold uppercase tracking-wider mb-1"
-              style={{ color: BLUEHOST_BLUE }}
-            >
-              {p.name}
-            </p>
-            <p className="text-xs text-stone-600 leading-relaxed mb-2">
-              {p.description}
-            </p>
-            <p className="text-xs font-semibold" style={{ color: prospectColor }}>
-              {p.benefit}
-            </p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ─── 6. PROOF ──────────────────────────────────────────────────────────────
-
-function ProofSlide({
-  content,
-  prospectColor,
-}: {
-  content: Record<string, unknown>;
-  prospectColor: string;
-}) {
-  // sourceUrl is injected post-generation from the DB, not from Claude
   const rawSourceUrl = content.sourceUrl;
   const sourceUrl =
     rawSourceUrl &&
@@ -353,39 +334,41 @@ function ProofSlide({
 
   return (
     <div className="flex h-full">
-      {/* Left: the metric — hero element */}
+      {/* Left: big metric */}
       <div
-        className="w-2/5 flex flex-col justify-center px-8 py-6 border-r border-stone-100"
-        style={{ backgroundColor: prospectColor + "12" }}
+        className="w-[42%] shrink-0 flex flex-col justify-center p-5"
+        style={{ backgroundColor: BH_BLUE + "08", borderRight: `2px solid ${BH_BLUE}15` }}
       >
-        <p className="text-[10px] font-semibold uppercase tracking-widest text-stone-500 mb-2">
-          Proven Results
-        </p>
+        <p style={label(BH_BLUE)} className="mb-2">Proven Results</p>
         <p
-          className="text-display font-bold leading-none mb-3"
-          style={{ fontSize: "2rem", color: prospectColor }}
+          style={{
+            fontFamily: "Poppins, ui-sans-serif, system-ui, sans-serif",
+            fontSize: "1.8rem",
+            fontWeight: 800,
+            color: prospectColor,
+            lineHeight: 1.1,
+            letterSpacing: "-0.02em",
+          }}
+          className="mb-2"
         >
           {content.headlineMetric as string}
         </p>
-        <p className="text-xs text-stone-700 font-semibold">
+        <p style={{ ...body("0.68rem"), fontWeight: 600, color: BH_NAVY }}>
           {content.customerName as string}
         </p>
-        <p className="text-[10px] text-stone-500">{content.industry as string}</p>
+        <p style={body("0.6rem", "#465D77")}>{content.industry as string}</p>
       </div>
 
       {/* Right: narrative */}
-      <div className="flex-1 flex flex-col justify-center px-8 py-6">
-        <h2
-          className="text-display text-lg font-semibold text-stone-900 mb-3"
-          style={{ letterSpacing: "-0.02em" }}
-        >
+      <div className="flex-1 flex flex-col justify-center p-5">
+        <h2 style={heading("1rem", BH_NAVY)} className="mb-3">
           {content.title as string}
         </h2>
-        <p className="text-xs text-stone-700 leading-relaxed mb-4">
+        <p style={body("0.7rem")} className="mb-4 leading-relaxed">
           {content.narrative as string}
         </p>
-        <div className="border-t border-stone-200 pt-3 flex items-center justify-between">
-          <p className="text-[10px] text-stone-500 font-medium">
+        <div className="border-t pt-3 flex items-center justify-between" style={{ borderColor: BH_BLUE + "20" }}>
+          <p style={body("0.6rem", "#9ca3af")}>
             {(content.productsUsed as string[])?.join(" · ")}
           </p>
           {sourceUrl ? (
@@ -393,13 +376,13 @@ function ProofSlide({
               href={sourceUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[10px] font-bold hover:underline"
-              style={{ color: BLUEHOST_BLUE }}
+              style={{ ...body("0.6rem"), color: BH_BLUE, fontWeight: 700 }}
+              className="hover:underline"
             >
               Read full case study →
             </a>
           ) : (
-            <span className="text-[10px] text-stone-300">No link available</span>
+            <span style={body("0.6rem", "#d1d5db")}>No link available</span>
           )}
         </div>
       </div>
@@ -407,107 +390,113 @@ function ProofSlide({
   );
 }
 
-// ─── 7. ROI ────────────────────────────────────────────────────────────────
+// ─── 7. ROI — matches Template Slide 20 ───────────────────────────────────
+// Left: narrative | Right: callout box with 3 big stats
 
-function RoiSlide({
-  content,
-  prospectColor,
-}: {
-  content: Record<string, unknown>;
-  prospectColor: string;
+function RoiSlide({ content, prospectColor }: {
+  content: Record<string, unknown>; prospectColor: string;
 }) {
-  const metrics =
-    (content.metrics as { label: string; value: string; description: string }[]) ?? [];
-
+  const metrics = (content.metrics as { label: string; value: string; description: string }[]) ?? [];
   return (
-    <div className="flex flex-col h-full px-10 py-5">
-      <h2
-        className="text-display text-xl font-semibold text-stone-900 mb-5"
-        style={{ letterSpacing: "-0.02em" }}
-      >
-        {content.title as string}
-      </h2>
+    <div className="flex h-full">
+      {/* Left: text */}
+      <div className="flex-1 flex flex-col justify-center p-5">
+        <h2 style={heading("1.2rem", BH_NAVY)} className="mb-3">
+          {content.title as string}
+        </h2>
+        <p style={body("0.7rem", "#465D77")} className="leading-relaxed mb-4">
+          {content.summary as string}
+        </p>
+        <div
+          className="p-3 rounded-lg"
+          style={{ backgroundColor: BH_BLUE + "08", borderLeft: `3px solid ${BH_BLUE}` }}
+        >
+          <p style={{ ...body("0.65rem"), fontWeight: 600, color: BH_NAVY }}>
+            The business case for {metrics[0]?.label ?? "switching"}
+          </p>
+        </div>
+      </div>
 
-      {/* Big stat boxes */}
-      <div className="grid grid-cols-3 gap-4 mb-5">
+      {/* Right: stat cards */}
+      <div
+        className="w-[45%] shrink-0 flex flex-col justify-center gap-2 p-4"
+        style={{ backgroundColor: BH_NAVY }}
+      >
         {metrics.map((m, i) => (
           <div
             key={i}
-            className="rounded-xl border border-stone-100 p-4 text-center"
-            style={{ backgroundColor: i === 0 ? prospectColor + "08" : "transparent" }}
+            className="rounded-lg p-3"
+            style={{ backgroundColor: "rgba(255,255,255,0.08)" }}
           >
             <p
-              className="text-display font-bold mb-1"
-              style={{ fontSize: "1.75rem", color: prospectColor, letterSpacing: "-0.03em" }}
+              style={{
+                fontFamily: "Poppins, ui-sans-serif, system-ui, sans-serif",
+                fontSize: "1.4rem",
+                fontWeight: 800,
+                color: i === 0 ? prospectColor : "#84C1FC",
+                lineHeight: 1,
+                letterSpacing: "-0.02em",
+              }}
             >
               {m.value}
             </p>
-            <p className="text-[10px] font-semibold text-stone-900 uppercase tracking-wider mb-1">
+            <p style={{ ...body("0.6rem"), fontWeight: 600, color: "white" }}>
               {m.label}
             </p>
-            <p className="text-[10px] text-stone-400 leading-relaxed">{m.description}</p>
+            <p style={body("0.58rem", "rgba(255,255,255,0.5)")}>{m.description}</p>
           </div>
         ))}
-      </div>
-
-      {/* Summary */}
-      <div
-        className="rounded-xl px-4 py-2.5 border-l-4"
-        style={{ backgroundColor: BLUEHOST_BLUE + "08", borderLeftColor: BLUEHOST_BLUE }}
-      >
-        <p className="text-xs text-stone-600 leading-relaxed">{content.summary as string}</p>
       </div>
     </div>
   );
 }
 
-// ─── 8. NEXT STEPS ─────────────────────────────────────────────────────────
+// ─── 8. NEXT STEPS — matches Template Slide 18 ────────────────────────────
+// Two-column layout: numbered steps left | CTA panel right
 
-function NextStepsSlide({
-  content,
-  prospectColor,
-}: {
-  content: Record<string, unknown>;
-  prospectColor: string;
+function NextStepsSlide({ content, prospectColor }: {
+  content: Record<string, unknown>; prospectColor: string;
 }) {
-  const steps =
-    (content.steps as { action: string; owner: string; timeline: string }[]) ?? [];
-
+  const steps = (content.steps as { action: string; owner: string; timeline: string }[]) ?? [];
   return (
-    <div className="flex flex-col h-full px-10 py-5">
-      <h2
-        className="text-display text-xl font-semibold text-stone-900 mb-5"
-        style={{ letterSpacing: "-0.02em" }}
-      >
-        {content.title as string}
-      </h2>
-
-      <div className="space-y-3 flex-1">
-        {steps.map((s, i) => (
-          <div key={i} className="flex items-start gap-4">
-            <div
-              className="shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-bold"
-              style={{ backgroundColor: prospectColor }}
-            >
-              {i + 1}
+    <div className="flex h-full">
+      {/* Left: steps */}
+      <div className="flex-1 flex flex-col justify-center p-5">
+        <h2 style={heading("1.2rem", BH_NAVY)} className="mb-4">
+          {content.title as string}
+        </h2>
+        <div className="space-y-3">
+          {steps.map((s, i) => (
+            <div key={i} className="flex items-start gap-3">
+              <div
+                className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-white"
+                style={{ backgroundColor: prospectColor, fontSize: "0.6rem", fontWeight: 700, fontFamily: "Poppins, sans-serif" }}
+              >
+                {i + 1}
+              </div>
+              <div>
+                <p style={{ ...body("0.72rem"), fontWeight: 600, color: BH_NAVY }}>
+                  {s.action}
+                </p>
+                <p style={body("0.6rem", "#9ca3af")}>
+                  {s.owner} · {s.timeline}
+                </p>
+              </div>
             </div>
-            <div className="flex-1">
-              <p className="text-sm font-semibold text-stone-900">{s.action}</p>
-              <p className="text-[10px] text-stone-400 mt-0.5">
-                {s.owner} · {s.timeline}
-              </p>
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
-      {/* CTA bar */}
+      {/* Right: CTA panel */}
       <div
-        className="rounded-xl px-5 py-3 flex items-center justify-between mt-4"
-        style={{ backgroundColor: BLUEHOST_BLUE }}
+        className="w-[38%] shrink-0 flex flex-col items-center justify-center p-5 text-center"
+        style={{ backgroundColor: BH_BLUE }}
       >
-        <p className="text-white text-sm font-semibold">{content.cta as string}</p>
-        <span className="text-white/60 text-xs">Bluehost</span>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={BH_LOGO_WHITE} alt="Bluehost" className="h-5 mb-4 opacity-90" />
+        <p style={{ ...body("0.75rem"), fontWeight: 600, color: "white", lineHeight: 1.4 }}>
+          {content.cta as string}
+        </p>
       </div>
     </div>
   );

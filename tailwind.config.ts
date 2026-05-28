@@ -9,10 +9,12 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        // Display serif — Fraunces via Google Fonts
+        // Display serif — Fraunces via Google Fonts (UI headlines)
         display: ["Fraunces", "ui-serif", "Georgia", "serif"],
         // UI body — system sans
         sans: ["Geist Sans", "ui-sans-serif", "system-ui", "sans-serif"],
+        // Deck slides — matches Bluehost template font
+        poppins: ["Poppins", "ui-sans-serif", "system-ui", "sans-serif"],
       },
       colors: {
         // Bluehost brand (V1 hardcoded)
