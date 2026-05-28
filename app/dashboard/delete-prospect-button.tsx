@@ -6,11 +6,10 @@ import { deleteProspect } from "@/app/actions/delete-prospect";
 
 type Props = {
   prospectId: string;
-  companyName: string;
   deckCount: number;
 };
 
-export function DeleteProspectButton({ prospectId, companyName, deckCount }: Props) {
+export function DeleteProspectButton({ prospectId, deckCount }: Props) {
   const [isPending, startTransition] = useTransition();
   const [confirming, setConfirming] = useState(false);
 

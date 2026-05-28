@@ -179,7 +179,6 @@ export default async function DashboardPage({
                     )}
                     <DeleteProspectButton
                       prospectId={p.id}
-                      companyName={p.companyName}
                       deckCount={p._count.decks}
                     />
                   </div>

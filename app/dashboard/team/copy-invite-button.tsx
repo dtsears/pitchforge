@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Copy, Check, Link } from "lucide-react";
+import { Check, Link } from "lucide-react";
 
 export function CopyInviteButton({ url }: { url: string }) {
   const [copied, setCopied] = useState(false);

@@ -80,7 +80,7 @@ export default async function BrandPage() {
             ))}
           </div>
           <p className="text-xs text-stone-500 leading-relaxed">
-            Emotional goal: <strong className="text-stone-700">"Bluehost gets me"</strong> — prospects should leave feeling confident, inspired, and optimistic.
+            Emotional goal: <strong className="text-stone-700">&ldquo;Bluehost gets me&rdquo;</strong> — prospects should leave feeling confident, inspired, and optimistic.
           </p>
         </section>
 
