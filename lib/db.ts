@@ -7,9 +7,9 @@ function createPrismaClient() {
   if (!connectionString) {
     throw new Error("DATABASE_URL environment variable is not set");
   }
-  // Pool is required for Vercel serverless — single Client exhausts connections
-  // Cap at 2 connections per serverless instance — Transaction Pooler handles concurrency
-  const pool = new Pool({ connectionString, max: 2 });
+  // Transaction Pooler (port 6543) manages concurrency server-side.
+  // 5 connections per serverless instance balances throughput vs pool limits.
+  const pool = new Pool({ connectionString, max: 5, idleTimeoutMillis: 10000 });
   const adapter = new PrismaPg(pool);
   return new PrismaClient({
     adapter,

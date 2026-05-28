@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { getCurrentUser } from "@/lib/queries";
 import { Sidebar } from "@/components/sidebar";
 
 export default async function DashboardLayout({
@@ -12,13 +12,7 @@ export default async function DashboardLayout({
   const session = await getServerSession(authOptions);
   if (!session?.user) redirect("/login");
 
-  const user = await db.user.findUnique({
-    where: { email: session.user.email! },
-    select: {
-      name: true,
-      org: { select: { name: true, primaryColor: true } },
-    },
-  });
+  const user = await getCurrentUser(session.user.email!);
 
   return (
     <div className="flex h-screen bg-stone-50 overflow-hidden">

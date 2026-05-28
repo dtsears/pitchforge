@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { authOptions } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { getCurrentUser } from "@/lib/queries";
 import Link from "next/link";
 import { Plus, Building2, Globe, Presentation, Send } from "lucide-react";
 import { DeleteProspectButton } from "./delete-prospect-button";
@@ -25,10 +26,7 @@ export default async function DashboardPage({
   const viewMine = searchParams.view !== "all";
 
   const [user, prospects] = await Promise.all([
-    db.user.findUnique({
-      where: { email: session.user.email! },
-      select: { id: true, name: true, title: true, org: { select: { name: true } } },
-    }),
+    getCurrentUser(session.user.email!),
     db.prospect.findMany({
       where: viewMine && session.user.email
         ? {
