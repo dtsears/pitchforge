@@ -1,5 +1,7 @@
 "use client";
 
+import React from "react";
+
 // Bluehost 2026 template — matched colors, fonts, and layouts
 const BH_BLUE = "#196CDF";      // Bluehost Blue 800 (headings, accents)
 const BH_NAVY = "#012957";      // Bluehost Blue Dark 1000 (dark panels)
@@ -32,8 +34,6 @@ const label = (color = BH_BLUE): React.CSSProperties => ({
   letterSpacing: "0.08em",
   color,
 });
-
-import React from "react";
 
 type SlidePreviewProps = {
   slide: { type: string; content: unknown };
