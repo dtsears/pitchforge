@@ -158,8 +158,8 @@ function RepSlide({ content, prospectColor }: {
                 fontFamily: "Poppins, ui-sans-serif, system-ui, sans-serif",
                 fontSize: "0.6rem",
                 fontWeight: 600,
-                color: BH_BLUE,
-                border: `1px solid ${BH_BLUE}40`,
+                color: prospectColor,
+                border: `1px solid ${prospectColor}60`,
                 borderRadius: "99px",
                 padding: "2px 8px",
               }}
@@ -205,7 +205,7 @@ function UnderstandingSlide({ content, prospectColor }: {
             <div key={i} className="flex gap-3 items-start">
               <div
                 className="shrink-0 w-5 h-5 rounded-full flex items-center justify-center text-white"
-                style={{ backgroundColor: BH_BLUE, fontSize: "0.55rem", fontWeight: 700, fontFamily: "Poppins, sans-serif" }}
+                style={{ backgroundColor: prospectColor, fontSize: "0.55rem", fontWeight: 700, fontFamily: "Poppins, sans-serif" }}
               >
                 {i + 1}
               </div>
@@ -246,9 +246,9 @@ function WhyNowSlide({ content, prospectColor }: {
         {/* Trigger block */}
         <div
           className="rounded-lg px-3 py-2.5 mb-3"
-          style={{ backgroundColor: BH_BLUE + "0D", borderLeft: `3px solid ${BH_BLUE}` }}
+          style={{ backgroundColor: prospectColor + "0D", borderLeft: `3px solid ${prospectColor}` }}
         >
-          <p style={label(BH_BLUE)} className="mb-1">Trigger Event</p>
+          <p style={label(prospectColor)} className="mb-1">Trigger Event</p>
           <p style={{ ...body("0.72rem"), fontWeight: 600, color: BH_NAVY }}>
             {content.triggerEvent as string}
           </p>
