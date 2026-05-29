@@ -1,0 +1,11 @@
+{
+  "functions": {
+    "api/export-pptx.py": {
+      "runtime": "python3.9",
+      "maxDuration": 60
+    },
+    "api/python-health.py": {
+      "runtime": "python3.9"
+    }
+  }
+}

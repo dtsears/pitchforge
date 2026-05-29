@@ -319,6 +319,22 @@ def keep_slides(prs, indices_to_keep: list):
 
 # ── HTTP handler ─────────────────────────────────────────────────────────────
 
+def make_filename(prospect_name: str, website_url: str) -> str:
+    """Bluehost_CompanyName_domain.com.pptx"""
+    try:
+        from urllib.parse import urlparse
+        domain = urlparse(website_url).netloc or website_url
+        domain = domain.replace("www.", "").split("/")[0]
+    except Exception:
+        domain = ""
+    safe_name = "".join(c if c.isalnum() or c in "-_" else "_" for c in prospect_name)
+    safe_domain = "".join(c if c.isalnum() or c in "-_." else "_" for c in domain)
+    parts = ["Bluehost", safe_name]
+    if safe_domain:
+        parts.append(safe_domain)
+    return "_".join(parts) + ".pptx"
+
+
 class handler(BaseHTTPRequestHandler):
 
     def do_OPTIONS(self):
@@ -333,6 +349,7 @@ class handler(BaseHTTPRequestHandler):
 
             slides_data = body.get("slides", [])
             prospect_name = body.get("prospectName", "Prospect")
+            website_url = body.get("websiteUrl", "")
 
             prs = Presentation(find_template())
 
@@ -359,8 +376,7 @@ class handler(BaseHTTPRequestHandler):
             prs.save(buf)
             pptx_bytes = buf.getvalue()
 
-            safe_name = "".join(c if c.isalnum() or c in "-_" else "_" for c in prospect_name)
-            filename = f"{safe_name}_Bluehost_Deck.pptx"
+            filename = make_filename(prospect_name, website_url)
 
             self.send_response(200)
             self._cors()

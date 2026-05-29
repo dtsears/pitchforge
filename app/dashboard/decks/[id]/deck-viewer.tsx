@@ -16,6 +16,7 @@ type Deck = {
   id: string;
   prospect: {
     companyName: string;
+    websiteUrl: string;
     primaryColor: string | null;
     accentColor: string | null;
     logoUrl: string | null;
@@ -48,6 +49,7 @@ export function DeckViewer({ deck }: { deck: Deck }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           prospectName: deck.prospect.companyName,
+          websiteUrl: deck.prospect.websiteUrl,
           slides: deck.slides.map((s) => ({
             type: s.type,
             content: s.content,
@@ -57,9 +59,10 @@ export function DeckViewer({ deck }: { deck: Deck }) {
       if (!res.ok) throw new Error(await res.text());
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
+      const domain = (() => { try { return new URL(deck.prospect.websiteUrl).hostname.replace("www.", ""); } catch { return ""; } })();
       const a = document.createElement("a");
       a.href = url;
-      a.download = `${deck.prospect.companyName.replace(/\s+/g, "_")}_Bluehost_Deck.pptx`;
+      a.download = `Bluehost_${deck.prospect.companyName.replace(/\s+/g, "_")}${domain ? `_${domain}` : ""}.pptx`;
       a.click();
       URL.revokeObjectURL(url);
     } catch (e) {
