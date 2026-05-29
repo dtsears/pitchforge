@@ -291,7 +291,6 @@ POPULATORS = {
 
 def remove_slide(prs, index: int):
     """Remove a slide from the presentation by 0-based index."""
-    from pptx.oxml.ns import qn
     slide_id_list = prs.slides._sldIdLst
     if index >= len(slide_id_list):
         return
@@ -300,8 +299,11 @@ def remove_slide(prs, index: int):
         "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}id"
     )
     slide_id_list.remove(slide_el)
-    if r_id and r_id in prs.part.related_parts:
-        del prs.part.related_parts[r_id]
+    if r_id:
+        try:
+            prs.part.drop_rel(r_id)  # python-pptx 1.0+ API
+        except Exception:
+            pass  # relationship may already be gone
 
 
 def keep_slides(prs, indices_to_keep: list):
