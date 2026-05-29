@@ -6,9 +6,9 @@ class handler(BaseHTTPRequestHandler):
     def do_GET(self):
         # Check for the template file
         candidates = [
-            '/var/task/public/bluehost-template.pptx',
-            os.path.join(os.path.dirname(__file__), '..', 'public', 'bluehost-template.pptx'),
-            os.path.join(os.getcwd(), 'public', 'bluehost-template.pptx'),
+            os.path.join(os.path.dirname(__file__), 'bluehost-template.pptx'),
+            '/var/task/api/bluehost-template.pptx',
+            os.path.join(os.getcwd(), 'api', 'bluehost-template.pptx'),
         ]
         template_check = {p: os.path.exists(p) for p in candidates}
 

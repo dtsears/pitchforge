@@ -29,9 +29,11 @@ DECK_ORDER = ["COVER", "REP", "UNDERSTANDING", "WHY_NOW", "SOLUTION", "PROOF", "
 
 def find_template():
     candidates = [
-        "/var/task/public/bluehost-template.pptx",
-        os.path.join(os.path.dirname(__file__), "..", "public", "bluehost-template.pptx"),
-        os.path.join(os.getcwd(), "public", "bluehost-template.pptx"),
+        # api/ directory — bundled directly with the function (primary)
+        os.path.join(os.path.dirname(__file__), "bluehost-template.pptx"),
+        # Fallbacks
+        "/var/task/api/bluehost-template.pptx",
+        os.path.join(os.getcwd(), "api", "bluehost-template.pptx"),
     ]
     for p in candidates:
         if os.path.exists(p):
